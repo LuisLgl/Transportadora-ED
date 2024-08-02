@@ -1,28 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "transportadora2.c"
+#include "transportadora.h"
 
-
-// Definições para pedidos
-struct Pedido {
-    int id;
-    char descricao[100];
-    struct Pedido *prox;
-} Pedido;
-
-// Definições para clientes
-typedef struct Cliente {
-    int id;
-    char nome[50];
-    char endereco[100];
-    Pedido *pedidos;  // Lista de pedidos do cliente
-    struct Cliente *prox;
-} Cliente;
-
-typedef struct {
-    Cliente *inicio;
-} ListaClientes;
 
 // Funções para a lista de clientes
 void inicializaListaClientes(ListaClientes *lista) {
