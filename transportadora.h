@@ -16,7 +16,7 @@ typedef struct Pedido {
 typedef struct Cliente {
     int id;
     char nome[50];
-    char endereço[100];
+    char endereco[100];
     Pedido *pedidos;  // Lista de pedidos do cliente
     struct Cliente *prox;
 } Cliente;
