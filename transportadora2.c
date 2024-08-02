@@ -1,4 +1,5 @@
 #include "transportadora.h"
+#include "transportadora1.c"
 
 // Funções para a lista de clientes
 void inicializaListaClientes(ListaClientes *lista) {

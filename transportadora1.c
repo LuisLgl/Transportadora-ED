@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "transportadora2.c"
 
 
 // Definições para pedidos
-typedef struct Pedido {
+struct Pedido {
     int id;
     char descricao[100];
     struct Pedido *prox;
@@ -14,6 +15,7 @@ typedef struct Pedido {
 typedef struct Cliente {
     int id;
     char nome[50];
+    char endereco[100];
     Pedido *pedidos;  // Lista de pedidos do cliente
     struct Cliente *prox;
 } Cliente;
@@ -28,18 +30,14 @@ void inicializaListaClientes(ListaClientes *lista) {
 }
 
 void adicionaCliente(ListaClientes *lista) {
-    Cliente *novo = (Cliente*) malloc(sizeof(Cliente));
-    if (novo == NULL) {
-        printf("Erro ao alocar memória para novo cliente.\n");
-        return;
-    }
-
+    Cliente *novo = (Cliente *)malloc(sizeof(Cliente));
     printf("Digite o ID do cliente: ");
     scanf("%d", &novo->id);
     printf("Digite o nome do cliente: ");
-    scanf(" %[^\n]", novo->nome);  // Lê a linha inteira até a nova linha
-
-    novo->pedidos = NULL;  // Inicializa a lista de pedidos como vazia
+    scanf("%s", novo->nome);
+    printf("Digite o endereço do cliente: ");
+    scanf("%s", novo->endereco);
+    novo->pedidos = NULL;
     novo->prox = lista->inicio;
     lista->inicio = novo;
 }
@@ -48,107 +46,84 @@ void removeCliente(ListaClientes *lista) {
     int id;
     printf("Digite o ID do cliente a ser removido: ");
     scanf("%d", &id);
-
-    Cliente *atual = lista->inicio;
     Cliente *anterior = NULL;
-
+    Cliente *atual = lista->inicio;
     while (atual != NULL && atual->id != id) {
         anterior = atual;
         atual = atual->prox;
     }
-
-    if (atual == NULL) {
-        printf("Cliente não encontrado.\n");
-        return;
-    }
-
-    if (anterior == NULL) {
-        lista->inicio = atual->prox;
+    if (atual != NULL) {
+        if (anterior == NULL) {
+            lista->inicio = atual->prox;
+        } else {
+            anterior->prox = atual->prox;
+        }
+        free(atual);
     } else {
-        anterior->prox = atual->prox;
+        printf("Cliente não encontrado!\n");
     }
-
-    Pedido *pedidoAtual = atual->pedidos;
-    while (pedidoAtual != NULL) {
-        Pedido *pedidoProx = pedidoAtual->prox;
-        free(pedidoAtual);
-        pedidoAtual = pedidoProx;
-    }
-
-    free(atual); // Libera a memória do cliente removido
 }
 
 void editaCliente(ListaClientes *lista) {
     int id;
     printf("Digite o ID do cliente a ser editado: ");
     scanf("%d", &id);
-
     Cliente *atual = lista->inicio;
-
     while (atual != NULL && atual->id != id) {
         atual = atual->prox;
     }
-
-    if (atual == NULL) {
-        printf("Cliente não encontrado.\n");
-        return;
+    if (atual != NULL) {
+        printf("Digite o novo nome do cliente: ");
+        scanf("%s", atual->nome);
+        printf("Digite o novo endereço do cliente: ");
+        scanf("%s", atual->endereco);
+    } else {
+        printf("Cliente não encontrado!\n");
     }
-
-    printf("Digite o novo nome do cliente: ");
-    scanf(" %[^\n]", atual->nome);  // Lê a linha inteira até a nova linha
 }
 
 void imprimeClientes(ListaClientes *lista) {
     Cliente *atual = lista->inicio;
-
     while (atual != NULL) {
-        printf("ID: %d, Nome: %s\n", atual->id, atual->nome);
+        printf("ID: %d, Nome: %s, Endereço: %s\n", atual->id, atual->nome, atual->endereco);
+        imprimePedidos(atual);
         atual = atual->prox;
     }
 }
 
 // Funções para a lista de pedidos
-void adicionaPedido(Cliente *cliente) {
-    Pedido *novo = (Pedido*) malloc(sizeof(Pedido));
-    if (novo == NULL) {
-        printf("Erro ao alocar memória para novo pedido.\n");
-        return;
-    }
-
+void adicionaPedido(Cliente *cliente, ListaFilas *filas) {
+    Pedido *novo = (Pedido *)malloc(sizeof(Pedido));
     printf("Digite o ID do pedido: ");
     scanf("%d", &novo->id);
     printf("Digite a descrição do pedido: ");
-    scanf(" %[^\n]", novo->descricao);  // Lê a linha inteira até a nova linha
-
+    scanf("%s", novo->descricao);
     novo->prox = cliente->pedidos;
     cliente->pedidos = novo;
+    adicionaEntrega(filas, novo->id, cliente->endereco);
 }
 
-void removePedido(Cliente *cliente) {
+void removePedido(Cliente *cliente, ListaFilas *filas) {
     int id;
     printf("Digite o ID do pedido a ser removido: ");
     scanf("%d", &id);
-
-    Pedido *atual = cliente->pedidos;
     Pedido *anterior = NULL;
-
+    Pedido *atual = cliente->pedidos;
     while (atual != NULL && atual->id != id) {
         anterior = atual;
         atual = atual->prox;
     }
-
-    if (atual == NULL) {
-        printf("Pedido não encontrado.\n");
-        return;
-    }
-
-    if (anterior == NULL) {
-        cliente->pedidos = atual->prox;
+    if (atual != NULL) {
+        if (anterior == NULL) {
+            cliente->pedidos = atual->prox;
+        } else {
+            anterior->prox = atual->prox;
+        }
+        removeEntrega(filas, cliente->endereco);
+        free(atual);
     } else {
-        anterior->prox = atual->prox;
+        printf("Pedido não encontrado!\n");
     }
-
-    free(atual); // Libera a memória do pedido removido
 }
 
 void editaPedido(Cliente *cliente) {
@@ -275,3 +250,4 @@ void menu(ListaClientes *lista) {
 
     } while (opcao != 0);
 }
+
