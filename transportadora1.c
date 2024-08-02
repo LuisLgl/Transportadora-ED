@@ -1,6 +1,5 @@
 #include "transportadora.h"
 
-
 // Funções para a lista de clientes
 void inicializaListaClientes(ListaClientes *lista) {
     lista->inicio = NULL;
@@ -74,7 +73,7 @@ void adicionaPedido(Cliente *cliente, ListaFilas *filas) {
     printf("Digite o ID do pedido: ");
     scanf("%d", &novo->id);
     printf("Digite a descrição do pedido: ");
-    scanf("%s", novo->descricao);
+    scanf(" %[^\n]", novo->descricao);  // Lê a linha inteira até a nova linha
     novo->prox = cliente->pedidos;
     cliente->pedidos = novo;
     adicionaEntrega(filas, novo->id, cliente->endereco);
@@ -132,8 +131,7 @@ void imprimePedidos(Cliente *cliente) {
     }
 }
 
-
-void menu(ListaClientes *lista) {
+void menu(ListaClientes *lista, ListaFilas *filas) {
     int opcao;
     int clienteID;
     Cliente *cliente;
@@ -173,7 +171,7 @@ void menu(ListaClientes *lista) {
                     cliente = cliente->prox;
                 }
                 if (cliente != NULL) {
-                    adicionaPedido(cliente);
+                    adicionaPedido(cliente, filas);
                 } else {
                     printf("Cliente não encontrado.\n");
                 }
@@ -186,7 +184,7 @@ void menu(ListaClientes *lista) {
                     cliente = cliente->prox;
                 }
                 if (cliente != NULL) {
-                    removePedido(cliente);
+                    removePedido(cliente, filas);
                 } else {
                     printf("Cliente não encontrado.\n");
                 }
@@ -227,4 +225,3 @@ void menu(ListaClientes *lista) {
 
     } while (opcao != 0);
 }
-
