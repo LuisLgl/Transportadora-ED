@@ -5,14 +5,10 @@
 
 int main() {
    
-    int main() {
     ListaClientes lista;
     inicializaListaClientes(&lista);
 
     menu(&lista);
-
-    return 0;
-}
 
     return 0;
 }

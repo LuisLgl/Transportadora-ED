@@ -16,6 +16,7 @@ typedef struct Pedido {
 typedef struct Cliente {
     int id;
     char nome[50];
+    char endereço[100];
     Pedido *pedidos;  // Lista de pedidos do cliente
     struct Cliente *prox;
 } Cliente;
@@ -23,6 +24,8 @@ typedef struct Cliente {
 typedef struct {
     Cliente *inicio;
 } ListaClientes;
+
+
 
 // Funções para a lista de clientes
 void inicializaListaClientes(ListaClientes *lista);
@@ -36,5 +39,6 @@ void adicionaPedido(Cliente *cliente);
 void removePedido(Cliente *cliente);
 void editaPedido(Cliente *cliente);
 void imprimePedidos(Cliente *cliente);
+int menu(ListaClientes *lista);
 
 #endif // TRANSPORTADORA_H
