@@ -25,7 +25,26 @@ typedef struct {
     Cliente *inicio;
 } ListaClientes;
 
+typedef struct Entrega {
+    int id_pedido;
+    char endereco[100];
+    struct Entrega *prox;
+} Entrega;
 
+typedef struct {
+    Entrega *inicio;
+    Entrega *fim;
+} FilaEntrega;
+
+typedef struct FilaPorEndereco {
+    char endereco[100];
+    FilaEntrega fila;
+    struct FilaPorEndereco *prox;
+} FilaPorEndereco;
+
+typedef struct {
+    FilaPorEndereco *inicio;
+} ListaFilas;
 
 // Funções para a lista de clientes
 void inicializaListaClientes(ListaClientes *lista);
@@ -35,10 +54,15 @@ void editaCliente(ListaClientes *lista);
 void imprimeClientes(ListaClientes *lista);
 
 // Funções para a lista de pedidos
-void adicionaPedido(Cliente *cliente);
-void removePedido(Cliente *cliente);
+void adicionaPedido(Cliente *cliente, ListaFilas *filas);
+void removePedido(Cliente *cliente, ListaFilas *filas);
 void editaPedido(Cliente *cliente);
 void imprimePedidos(Cliente *cliente);
-int menu(ListaClientes *lista);
+
+// Funções para a lista de filas de entregas
+void inicializaListaFilas(ListaFilas *filas);
+void adicionaEntrega(ListaFilas *filas, int id_pedido, char *endereco);
+Entrega* removeEntrega(ListaFilas *filas, char *endereco);
+void imprimeFilas(ListaFilas *filas);
 
 #endif // TRANSPORTADORA_H
