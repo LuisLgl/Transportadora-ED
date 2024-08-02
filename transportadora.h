@@ -25,6 +25,7 @@ typedef struct {
     Cliente *inicio;
 } ListaClientes;
 
+// Definições para filas de entrega
 typedef struct Entrega {
     int id_pedido;
     char endereco[100];
