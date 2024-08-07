@@ -164,7 +164,6 @@ void adicionaPedido(ListaClientes *lista, ListaFilas *filas) {
 
     novo->prox = cliente->pedidos;
     cliente->pedidos = novo;
-    adicionaEntrega(filas, novo->id, cliente->endereco);
 
     printf("Pedido adicionado com sucesso!\n");
     printf("ID do Pedido: %d, Descrição: %s, Status: %s\n", novo->id, novo->descricao, novo->status);
@@ -293,7 +292,7 @@ void imprimePedidos(Cliente *cliente) {
     }
 }
 
-void despacharPedido(Cliente *cliente) {
+void despacharPedido(Cliente *cliente,ListaFilas *filas,int id_pedido,char *endereço) {
     int id;
     printf("Digite o ID do pedido a ser despachado: ");
     scanf("%d", &id);
@@ -323,6 +322,7 @@ void despacharPedido(Cliente *cliente) {
     if (confirmacao == 's' || confirmacao == 'S') {
         strcpy(atual->status, "despachado");
         printf("Pedido despachado com sucesso.\n");
+        adicionaEntrega(filas, novo->id, cliente->endereco);
     } else {
         printf("Despacho cancelado.\n");
     }
@@ -334,6 +334,7 @@ void despacharPedido(Cliente *cliente) {
     if (novo_despacho == 's' || novo_despacho == 'S') {
         despacharPedido(cliente);
     }
+
 }
 
 
