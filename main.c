@@ -6,6 +6,10 @@
 int main() {
     ListaClientes lista;
     inicializaListaClientes(&lista);
+
+    ListaFilas filas;
+    inicializaListaFilas(&filas);
+
     char escolha;
 
     do {
@@ -19,7 +23,7 @@ int main() {
 
         switch (escolha) {
             case '1':
-                menuCadastro(&lista);
+                menuCadastro(&lista, &filas);
                 break;
             case '2':
                 // menuTransportes(&lista);
@@ -32,6 +36,8 @@ int main() {
                 break;
         }
     } while (escolha != '0');
+
+    // Libere a memória aqui, quando terminar
 
     return 0;
 }
