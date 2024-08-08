@@ -5,74 +5,73 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Definições para pedidos
-typedef struct Pedido {
-    int id;
-    char descricao[100];
-    char status[50];
-    struct Pedido *prox;
+// Estrutura para representar um pedido
+typedef struct pedido {
+    int id;                        // ID do pedido
+    char descricao[100];           // Descrição do pedido
+    char status[20];               // Status do pedido
+    struct pedido *prox;           // Ponteiro para o próximo pedido
 } Pedido;
 
-// Definições para clientes
-typedef struct Cliente {
-    int id;
-    char nome[50];
-    char endereco[100];
-    char cpf[12];
-    Pedido *pedidos;  // Lista de pedidos do cliente
-    struct Cliente *prox;
+// Estrutura para representar um cliente
+typedef struct cliente {
+    int id;                        // ID do cliente (últimos 4 dígitos do CPF)
+    char cpf[12];                  // CPF do cliente
+    char nome[100];                // Nome do cliente
+    char endereco[150];            // Endereço do cliente
+    Pedido *pedidos;               // Ponteiro para a lista de pedidos do cliente
+    struct cliente *prox;          // Ponteiro para o próximo cliente
 } Cliente;
 
-typedef struct {
-    Cliente *inicio;
+// Estrutura para a lista de clientes
+typedef struct listaClientes {
+    Cliente *inicio;               // Ponteiro para o início da lista de clientes
 } ListaClientes;
 
-// Definições para filas de entrega
-typedef struct Entrega {
-    int id_pedido;
-    char endereco[100];
-    struct Entrega *prox;
+// Estrutura para representar uma entrega
+typedef struct entrega {
+    int id_pedido;                 // ID do pedido associado à entrega
+    char endereco[150];            // Endereço de entrega
+    struct entrega *prox;          // Ponteiro para a próxima entrega
 } Entrega;
 
-typedef struct {
-    Entrega *inicio;
-    Entrega *fim;
-} FilaEntrega;
-
-typedef struct FilaPorEndereco {
-    char endereco[100];
-    FilaEntrega fila;
-    struct FilaPorEndereco *prox;
+// Estrutura para representar uma fila de entregas para um endereço específico
+typedef struct filaPorEndereco {
+    char endereco[150];            // Endereço associado à fila
+    Pedido *inicio;               // Ponteiro para o início da fila de entregas
+    Pedido *fim;                  // Ponteiro para o fim da fila de entregas
+    struct filaPorEndereco *prox;  // Ponteiro para a próxima fila de endereços
 } FilaPorEndereco;
 
-typedef struct {
-    FilaPorEndereco *inicio;
-} ListaFilas;
+// Estrutura para representar a fila de filas de entregas
+typedef struct filaFilas {
+    FilaPorEndereco *inicio;       // Ponteiro para o início da fila de filas
+    FilaPorEndereco *fim;          // Ponteiro para o fim da fila de filas
+} FilaFilas;
 
-// Funções para a lista de clientes
+// Protótipos de funções
+
+// Funções para Clientes
 void inicializaListaClientes(ListaClientes *lista);
 void adicionaCliente(ListaClientes *lista);
-void removeCliente(ListaClientes *lista, ListaFilas *filas);
+void removeCliente(ListaClientes *lista, FilaFilas *filas);
 void editaCliente(ListaClientes *lista);
 void imprimeClientes(ListaClientes *lista);
+Cliente *encontrarClientePorID(ListaClientes *lista, int id_cliente);
 
-// Funções para a lista de pedidos
-void adicionaPedido(ListaClientes *lista, ListaFilas *filas);
-void removePedido(Cliente *cliente, ListaFilas *filas);
-void editaPedido(Cliente *cliente, ListaFilas *filas);
+// Funções para Pedidos
+void adicionaPedido(ListaClientes *lista, FilaFilas *filas);
+void removePedido(Cliente *cliente, FilaFilas *filas);
+void editaPedido(Cliente *cliente);
 void imprimePedidos(Cliente *cliente);
-Cliente* encontrarClientePorID(ListaClientes *lista, int id_cliente);
-void despacharPedido(Cliente *cliente);
+void despacharPedido(Cliente *cliente, FilaFilas *filas, int id_pedido);
 
-
-
-// Funções para a lista de filas de entregas
-void inicializaListaFilas(ListaFilas *filas);
-void adicionaEntrega(ListaFilas *filas, int id_pedido, char *endereco);
-Entrega* removeEntrega(ListaFilas *filas, char *endereco);
-void imprimeFilas(ListaFilas *filas);
-
-// Função de menu
-void menuCadastro(ListaClientes *lista, ListaFilas *filas);
+// Funções para Filas de Entrega
+void inicializaFilaFilas(FilaFilas *filas);
+void adicionaEntrega(FilaFilas *filas, int id_pedido, const char *endereco);
+void removeEntrega(FilaFilas *filas, int id_pedido, const char *endereco);
+void editaEntrega(FilaFilas *filas);
+void imprimeFila(FilaFilas *filas);
+void limparMemoria(ListaClientes *clientes, FilaFilas *filas);
 
 #endif // TRANSPORTADORA_H
