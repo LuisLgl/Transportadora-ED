@@ -9,10 +9,15 @@ void menuEntregas(FilaFilas *filaFilas);
 int main() {
     ListaClientes listaClientes;
     FilaFilas filaFilas;
+    PilhaNaoEfetuada *pilhaNaoEfetuada;
+    PilhaDevolucao *pilhaDevolucao;
     int opcao;
 
+    // Inicializa as estruturas de dados
     inicializaListaClientes(&listaClientes);
     inicializaFilaFilas(&filaFilas);
+    inicializaPilhaNaoEfetuada(&pilhaNaoEfetuada);
+    inicializaPilhaDevolucao(&pilhaDevolucao);
 
     do {
         printf("\n===== Sistema de Gestão de Transportadora =====\n");
@@ -35,15 +40,14 @@ int main() {
                 break;
             case 4:
                 printf("Saindo...\n");
+                // Liberação de memória
+                //limparMemoria(&listaClientes, &filaFilas);
                 break;
             default:
                 printf("Opção inválida! Tente novamente.\n");
                 break;
         }
     } while (opcao != 4);
-
-    // Liberação de memória
-    //limparMemoria(&listaClientes, &filaFilas);
 
     return 0;
 }
@@ -69,7 +73,7 @@ void menuClientes(ListaClientes *listaClientes, FilaFilas *filaFilas) {
                 removeCliente(listaClientes, filaFilas);
                 break;
             case 3:
-                editaCliente(listaClientes);
+                editaCliente(listaClientes, filaFilas);
                 break;
             case 4:
                 imprimeClientes(listaClientes);
@@ -92,7 +96,8 @@ void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas) {
         printf("1. Adicionar Pedido\n");
         printf("2. Remover Pedido\n");
         printf("3. Editar Pedido\n");
-        printf("4. Voltar\n");
+        printf("4. Despachar Pedido\n"); // Nova opção
+        printf("5. Voltar\n");
         printf("Escolha uma opção: ");
         scanf("%d", &opcao);
 
@@ -125,13 +130,16 @@ void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas) {
                 break;
             }
             case 4:
+                despacharPedido(listaClientes, filaFilas);
+                break;
+            case 5:
                 printf("Voltando ao menu principal...\n");
                 break;
             default:
                 printf("Opção inválida! Tente novamente.\n");
                 break;
         }
-    } while (opcao != 4);
+    } while (opcao != 5);
 }
 
 void menuEntregas(FilaFilas *filaFilas) {

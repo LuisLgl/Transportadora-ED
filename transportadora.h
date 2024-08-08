@@ -45,13 +45,24 @@ typedef struct filaFilas {
     FilaPorEndereco *fim;          // Ponteiro para o fim da fila de filas
 } FilaFilas;
 
+typedef struct pilhaNaoEfetuada {
+    Pedido *pedido;
+    struct pilhaNaoEfetuada *prox;
+} PilhaNaoEfetuada;
+
+typedef struct pilhaDevolucao {
+    Pedido *pedido;
+    struct pilhaDevolucao *prox;
+} PilhaDevolucao;
+
+
 // Protótipos de funções
 
 // Funções para Clientes
 void inicializaListaClientes(ListaClientes *lista);
 void adicionaCliente(ListaClientes *lista);
 void removeCliente(ListaClientes *lista, FilaFilas *filas);
-void editaCliente(ListaClientes *lista);
+void editaCliente(ListaClientes *lista, FilaFilas *filas);
 void imprimeClientes(ListaClientes *lista);
 Cliente *encontrarClientePorID(ListaClientes *lista, int id_cliente);
 
@@ -60,14 +71,24 @@ void adicionaPedido(ListaClientes *lista, FilaFilas *filas);
 void removePedido(Cliente *cliente, FilaFilas *filas);
 void editaPedido(Cliente *cliente);
 void imprimePedidos(Cliente *cliente);
-void despacharPedido(Cliente *cliente, FilaFilas *filas, int id_pedido);
+void despacharPedido(ListaClientes *lista, FilaFilas *filas);
 
 // Funções para Filas de Entrega
 void inicializaFilaFilas(FilaFilas *filas);
 void adicionaEntrega(FilaFilas *filas, int id_pedido, const char *endereco);
 void removeEntrega(FilaFilas *filas, int id_pedido, const char *endereco);
-void editaEntrega(FilaFilas *filas);
 void imprimeFilaFilas(FilaFilas *filas);
 void limparMemoria(ListaClientes *clientes, FilaFilas *filas);
+
+
+void inicializaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha);
+void inicializaPilhaDevolucao(PilhaDevolucao **pilha);
+void adicionaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha, Pedido *pedido);
+void adicionaPilhaDevolucao(PilhaDevolucao **pilha, Pedido *pedido);
+void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, PilhaDevolucao **pilhaDevolucao, int *pontos);
+void processaPilhaNaoEfetuada(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, PilhaDevolucao **pilhaDevolucao, int *pontos);
+void processaPilhaDevolucao(PilhaDevolucao **pilhaDevolucao);
+void imprimePilhaNaoEfetuada(PilhaNaoEfetuada *pilha);
+void imprimePilhaDevolucao(PilhaDevolucao *pilha);
 
 #endif // TRANSPORTADORA_H
