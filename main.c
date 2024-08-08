@@ -4,7 +4,7 @@
 
 void menuClientes(ListaClientes *listaClientes, FilaFilas *filaFilas);
 void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas);
-void menuEntregas(FilaFilas *filaFilas);
+void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, PilhaDevolucao *pilhaDevolucao, int *pontos);
 
 int main() {
     ListaClientes listaClientes;
@@ -12,6 +12,7 @@ int main() {
     PilhaNaoEfetuada *pilhaNaoEfetuada;
     PilhaDevolucao *pilhaDevolucao;
     int opcao;
+    int pontos = 0;
 
     // Inicializa as estruturas de dados
     inicializaListaClientes(&listaClientes);
@@ -24,7 +25,8 @@ int main() {
         printf("1. Gerenciar Clientes\n");
         printf("2. Gerenciar Pedidos\n");
         printf("3. Gerenciar Entregas\n");
-        printf("4. Sair\n");
+        printf("4. Mostrar Pontos\n");
+        printf("5. Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
@@ -36,18 +38,21 @@ int main() {
                 menuPedidos(&listaClientes, &filaFilas);
                 break;
             case 3:
-                menuEntregas(&filaFilas);
+                menuEntregas(&filaFilas, pilhaNaoEfetuada, pilhaDevolucao, &pontos);
                 break;
             case 4:
+                printf("Pontos atuais: %d\n", pontos);
+                break;
+            case 5:
                 printf("Saindo...\n");
-                // Liberação de memória
-                //limparMemoria(&listaClientes, &filaFilas);
+                // Liberação de memória (descomente se necessário)
+                //limparMemoria(&listaClientes, &filaFilas, &pilhaNaoEfetuada, &pilhaDevolucao);
                 break;
             default:
                 printf("Opcao invalida! Tente novamente.\n");
                 break;
         }
-    } while (opcao != 4);
+    } while (opcao != 5);
 
     return 0;
 }
@@ -96,7 +101,7 @@ void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas) {
         printf("1. Adicionar Pedido\n");
         printf("2. Remover Pedido\n");
         printf("3. Editar Pedido\n");
-        printf("4. Despachar Pedido\n"); // Nova opção
+        printf("4. Despachar Pedido\n"); 
         printf("5. Voltar\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
@@ -142,14 +147,14 @@ void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas) {
     } while (opcao != 5);
 }
 
-void menuEntregas(FilaFilas *filaFilas) {
+void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, PilhaDevolucao *pilhaDevolucao, int *pontos) {
     int opcao;
 
     do {
         printf("\n===== Gestao de Entregas =====\n");
         printf("1. Imprimir Fila de Entregas\n");
-        printf("2. Realizar Entrega");
-        printf("2. Voltar\n");
+        printf("2. Realizar Entrega\n");
+        printf("3. Voltar\n");
         printf("Escolha uma opção: ");
         scanf("%d", &opcao);
 
@@ -158,7 +163,7 @@ void menuEntregas(FilaFilas *filaFilas) {
                 imprimeFilaFilas(filaFilas);
                 break;
             case 2:
-                printf("Faz A funcao ");
+                concluirEntrega(filaFilas, &pilhaNaoEfetuada, &pilhaDevolucao, pontos);
                 break;
             case 3:
                 printf("Voltando ao menu principal...\n");

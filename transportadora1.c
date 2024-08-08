@@ -50,7 +50,7 @@ void adicionaCliente(ListaClientes *lista)
     formatarString(novo->nome);   // Formata o nome
 
     printf("Digite o endereco do cliente: ");
-    printf("Endereco:");
+    
     scanf(" %[^\n]", novo->endereco); // Corrigido para aceitar espaços
     formatarString(novo->endereco);   // Formata o endereço
 
@@ -248,7 +248,8 @@ void adicionaPedido(ListaClientes *lista)
     printf("Digite o ID do pedido: ");
     scanf("%d", &novo->id);
     printf("Digite a descricao do pedido: ");
-    scanf(" %[^\n]", novo->descricao); // Corrigido para aceitar espaços
+    gets(novo->descricao); // Corrigido para aceitar espaços
+    getchar();
 
     strcpy(novo->status, "preparando");
 
