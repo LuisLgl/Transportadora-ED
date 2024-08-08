@@ -1,161 +1,159 @@
-#include "transportadora.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "transportadora.h"
 
-// Função para o menu de cadastro de clientes e pedidos
-void menuCadastro(ListaClientes *lista, FilaFilas *filas) {
+void menuClientes(ListaClientes *listaClientes, FilaFilas *filaFilas);
+void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas);
+void menuEntregas(FilaFilas *filaFilas);
+
+int main() {
+    ListaClientes listaClientes;
+    FilaFilas filaFilas;
     int opcao;
+
+    inicializaListaClientes(&listaClientes);
+    inicializaFilaFilas(&filaFilas);
+
     do {
-        printf("\nMENU DE CADASTRO:\n");
+        printf("\n===== Sistema de Gestão de Transportadora =====\n");
+        printf("1. Gerenciar Clientes\n");
+        printf("2. Gerenciar Pedidos\n");
+        printf("3. Gerenciar Entregas\n");
+        printf("4. Sair\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                menuClientes(&listaClientes, &filaFilas);
+                break;
+            case 2:
+                menuPedidos(&listaClientes, &filaFilas);
+                break;
+            case 3:
+                menuEntregas(&filaFilas);
+                break;
+            case 4:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opção inválida! Tente novamente.\n");
+                break;
+        }
+    } while (opcao != 4);
+
+    // Liberação de memória
+    //limparMemoria(&listaClientes, &filaFilas);
+
+    return 0;
+}
+
+void menuClientes(ListaClientes *listaClientes, FilaFilas *filaFilas) {
+    int opcao;
+
+    do {
+        printf("\n===== Gestão de Clientes =====\n");
         printf("1. Adicionar Cliente\n");
         printf("2. Remover Cliente\n");
         printf("3. Editar Cliente\n");
         printf("4. Imprimir Clientes\n");
-        printf("5. Adicionar Pedido\n");
-        printf("6. Remover Pedido\n");
-        printf("7. Editar Pedido\n");
-        printf("8. Imprimir Pedidos de um Cliente\n");
-        printf("9. Imprimir Filas de Entregas\n");
-        printf("0. Voltar\n");
-        printf("Escolha uma opcao: ");
+        printf("5. Voltar\n");
+        printf("Escolha uma opção: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
             case 1:
-                adicionaCliente(lista);
+                adicionaCliente(listaClientes);
                 break;
             case 2:
-                removeCliente(lista, filas);
+                removeCliente(listaClientes, filaFilas);
                 break;
             case 3:
-                editaCliente(lista);
+                editaCliente(listaClientes);
                 break;
             case 4:
-                imprimeClientes(lista);
+                imprimeClientes(listaClientes);
                 break;
             case 5:
-                adicionaPedido(lista, filas);
+                printf("Voltando ao menu principal...\n");
                 break;
-            case 6: {
+            default:
+                printf("Opção inválida! Tente novamente.\n");
+                break;
+        }
+    } while (opcao != 5);
+}
+
+void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas) {
+    int opcao;
+
+    do {
+        printf("\n===== Gestão de Pedidos =====\n");
+        printf("1. Adicionar Pedido\n");
+        printf("2. Remover Pedido\n");
+        printf("3. Editar Pedido\n");
+        printf("4. Voltar\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                adicionaPedido(listaClientes, filaFilas);
+                break;
+            case 2: {
                 int id_cliente;
-                printf("Digite o ID do cliente: ");
+                printf("Digite o ID do cliente do pedido a ser removido: ");
                 scanf("%d", &id_cliente);
-                Cliente *cliente = encontrarClientePorID(lista, id_cliente);
+                Cliente *cliente = encontrarClientePorID(listaClientes, id_cliente);
                 if (cliente != NULL) {
-                    removePedido(cliente, filas);
+                    removePedido(cliente, filaFilas);
                 } else {
-                    printf("Cliente não encontrado!\n");
+                    printf("Cliente não encontrado.\n");
                 }
                 break;
             }
-            case 7: {
+            case 3: {
                 int id_cliente;
-                printf("Digite o ID do cliente: ");
+                printf("Digite o ID do cliente do pedido a ser editado: ");
                 scanf("%d", &id_cliente);
-                Cliente *cliente = encontrarClientePorID(lista, id_cliente);
+                Cliente *cliente = encontrarClientePorID(listaClientes, id_cliente);
                 if (cliente != NULL) {
                     editaPedido(cliente);
                 } else {
-                    printf("Cliente não encontrado!\n");
+                    printf("Cliente não encontrado.\n");
                 }
                 break;
             }
-            case 8: {
-                int id_cliente;
-                printf("Digite o ID do cliente: ");
-                scanf("%d", &id_cliente);
-                Cliente *cliente = encontrarClientePorID(lista, id_cliente);
-                if (cliente != NULL) {
-                    imprimePedidos(cliente);
-                } else {
-                    printf("Cliente não encontrado!\n");
-                }
-                break;
-            }
-            case 9:
-                imprimeFilas(filas);
-                break;
-            case 0:
+            case 4:
                 printf("Voltando ao menu principal...\n");
                 break;
             default:
-                printf("Opcao invalida. Tente novamente.\n");
+                printf("Opção inválida! Tente novamente.\n");
                 break;
         }
-    } while (opcao != 0);
+    } while (opcao != 4);
 }
 
-// Função para o menu de transportes (placeholder)
-void menuTransportes(ListaClientes *lista) {
+void menuEntregas(FilaFilas *filaFilas) {
     int opcao;
+
     do {
-        printf("\nMENU DE TRANSPORTES:\n");
-        printf("1. Alterar Status para Entregue\n");
-        printf("2. Despachar Pedido\n");
-        printf("3. Editar Entrega\n");
-        printf("0. Voltar\n");
-        printf("Escolha uma opcao: ");
+        printf("\n===== Gestão de Entregas =====\n");
+        printf("1. Imprimir Fila de Entregas\n");
+        printf("2. Voltar\n");
+        printf("Escolha uma opção: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
             case 1:
-                alterarStatusParaEntregue(lista);
+                imprimeFilaFilas(filaFilas);
                 break;
             case 2:
-                // Implementar a função para despachar pedidos
-                // (depende de como você deseja implementar o despacho de pedidos)
-                break;
-            case 3:
-                // Implementar a função para editar entregas
-                // (depende de como você deseja implementar a edição de entregas)
-                break;
-            case 0:
                 printf("Voltando ao menu principal...\n");
                 break;
             default:
-                printf("Opcao invalida. Tente novamente.\n");
+                printf("Opção inválida! Tente novamente.\n");
                 break;
         }
-    } while (opcao != 0);
-}
-
-int main() {
-    ListaClientes lista;
-    inicializaListaClientes(&lista);
-
-    FilaFilas filas;
-    inicializaListaFilas(&filas);
-
-    char escolha;
-
-    do {
-        // Display the main menu
-        printf("Menu Principal:\n");
-        printf("1. Cadastro de Clientes e Pedidos\n");
-        printf("2. Transportes\n");
-        printf("0. Sair\n");
-        printf("Escolha uma opcao: ");
-        scanf(" %c", &escolha);
-
-        switch (escolha) {
-            case '1':
-                menuCadastro(&lista, &filas);
-                break;
-            case '2':
-                menuTransportes(&lista);
-                break;
-            case '0':
-                printf("Saindo...\n");
-                break;
-            default:
-                printf("Opcao invalida. Tente novamente.\n");
-                break;
-        }
-    } while (escolha != '0');
-
-    // Libere a memória aqui
-    limparMemoria(&lista, &filas);
-
-    return 0;
+    } while (opcao != 2);
 }

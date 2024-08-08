@@ -1,10 +1,6 @@
 #ifndef TRANSPORTADORA_H
 #define TRANSPORTADORA_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 // Estrutura para representar um pedido
 typedef struct pedido {
     int id;                        // ID do pedido
@@ -71,7 +67,7 @@ void inicializaFilaFilas(FilaFilas *filas);
 void adicionaEntrega(FilaFilas *filas, int id_pedido, const char *endereco);
 void removeEntrega(FilaFilas *filas, int id_pedido, const char *endereco);
 void editaEntrega(FilaFilas *filas);
-void imprimeFila(FilaFilas *filas);
+void imprimeFilaFilas(FilaFilas *filas);
 void limparMemoria(ListaClientes *clientes, FilaFilas *filas);
 
 #endif // TRANSPORTADORA_H
