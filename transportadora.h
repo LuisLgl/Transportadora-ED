@@ -67,7 +67,7 @@ void imprimeClientes(ListaClientes *lista);
 Cliente *encontrarClientePorID(ListaClientes *lista, int id_cliente);
 
 // Funções para Pedidos
-void adicionaPedido(ListaClientes *lista, FilaFilas *filas);
+void adicionaPedido(ListaClientes *lista);
 void removePedido(Cliente *cliente, FilaFilas *filas);
 void editaPedido(Cliente *cliente);
 void imprimePedidos(Cliente *cliente);
@@ -90,5 +90,7 @@ void processaPilhaNaoEfetuada(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetu
 void processaPilhaDevolucao(PilhaDevolucao **pilhaDevolucao);
 void imprimePilhaNaoEfetuada(PilhaNaoEfetuada *pilha);
 void imprimePilhaDevolucao(PilhaDevolucao *pilha);
+void formatarString(char *str);
+
 
 #endif // TRANSPORTADORA_H

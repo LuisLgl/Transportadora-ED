@@ -20,12 +20,12 @@ int main() {
     inicializaPilhaDevolucao(&pilhaDevolucao);
 
     do {
-        printf("\n===== Sistema de Gestão de Transportadora =====\n");
+        printf("\n===== Sistema de Gestao de Transportadora =====\n");
         printf("1. Gerenciar Clientes\n");
         printf("2. Gerenciar Pedidos\n");
         printf("3. Gerenciar Entregas\n");
         printf("4. Sair\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
@@ -44,7 +44,7 @@ int main() {
                 //limparMemoria(&listaClientes, &filaFilas);
                 break;
             default:
-                printf("Opção inválida! Tente novamente.\n");
+                printf("Opcao invalida! Tente novamente.\n");
                 break;
         }
     } while (opcao != 4);
@@ -82,7 +82,7 @@ void menuClientes(ListaClientes *listaClientes, FilaFilas *filaFilas) {
                 printf("Voltando ao menu principal...\n");
                 break;
             default:
-                printf("Opção inválida! Tente novamente.\n");
+                printf("Opção invalida! Tente novamente.\n");
                 break;
         }
     } while (opcao != 5);
@@ -92,18 +92,18 @@ void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas) {
     int opcao;
 
     do {
-        printf("\n===== Gestão de Pedidos =====\n");
+        printf("\n===== Gestao de Pedidos =====\n");
         printf("1. Adicionar Pedido\n");
         printf("2. Remover Pedido\n");
         printf("3. Editar Pedido\n");
         printf("4. Despachar Pedido\n"); // Nova opção
         printf("5. Voltar\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
             case 1:
-                adicionaPedido(listaClientes, filaFilas);
+                adicionaPedido(listaClientes);
                 break;
             case 2: {
                 int id_cliente;
@@ -113,7 +113,7 @@ void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas) {
                 if (cliente != NULL) {
                     removePedido(cliente, filaFilas);
                 } else {
-                    printf("Cliente não encontrado.\n");
+                    printf("Cliente nao encontrado.\n");
                 }
                 break;
             }
@@ -125,7 +125,7 @@ void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas) {
                 if (cliente != NULL) {
                     editaPedido(cliente);
                 } else {
-                    printf("Cliente não encontrado.\n");
+                    printf("Cliente nao encontrado.\n");
                 }
                 break;
             }
@@ -136,7 +136,7 @@ void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas) {
                 printf("Voltando ao menu principal...\n");
                 break;
             default:
-                printf("Opção inválida! Tente novamente.\n");
+                printf("Opcao invalida! Tente novamente.\n");
                 break;
         }
     } while (opcao != 5);
@@ -146,7 +146,7 @@ void menuEntregas(FilaFilas *filaFilas) {
     int opcao;
 
     do {
-        printf("\n===== Gestão de Entregas =====\n");
+        printf("\n===== Gestao de Entregas =====\n");
         printf("1. Imprimir Fila de Entregas\n");
         printf("2. Realizar Entrega");
         printf("2. Voltar\n");
@@ -158,13 +158,13 @@ void menuEntregas(FilaFilas *filaFilas) {
                 imprimeFilaFilas(filaFilas);
                 break;
             case 2:
-                printf("Faz A função ");
+                printf("Faz A funcao ");
                 break;
             case 3:
                 printf("Voltando ao menu principal...\n");
                 break;
             default:
-                printf("Opção inválida! Tente novamente.\n");
+                printf("Opcao invalida! Tente novamente.\n");
                 break;
         }
     } while (opcao != 3);
