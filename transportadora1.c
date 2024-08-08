@@ -173,7 +173,6 @@ void editaCliente(ListaClientes *lista, FilaFilas *filas)
     }
 }
 
-
 void imprimeClientes(ListaClientes *lista)
 {
     Cliente *atual = lista->inicio;
@@ -510,37 +509,21 @@ void imprimeFilaFilas(FilaFilas *filas)
     }
 }
 
-
-// Função para criar uma nova entrega com base nos pedidos prontos para envio
-void processaPedidosProntos(ListaClientes *lista, FilaFilas *filas)
+void inicializaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha)
 {
-    Cliente *clienteAtual = lista->inicio;
-    while (clienteAtual != NULL)
-    {
-        Pedido *pedidoAtual = clienteAtual->pedidos;
-        while (pedidoAtual != NULL)
-        {
-            if (strcmp(pedidoAtual->status, "pronto para envio") == 0)
-            {
-                adicionaEntrega(filas, pedidoAtual->id, clienteAtual->endereco);
-            }
-            pedidoAtual = pedidoAtual->prox;
-        }
-        clienteAtual = clienteAtual->prox;
-    }
-}
-
-void inicializaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha) {
     *pilha = NULL;
 }
 
-void inicializaPilhaDevolucao(PilhaDevolucao **pilha) {
+void inicializaPilhaDevolucao(PilhaDevolucao **pilha)
+{
     *pilha = NULL;
 }
 
-void adicionaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha, Pedido *pedido) {
+void adicionaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha, Pedido *pedido)
+{
     PilhaNaoEfetuada *novo = (PilhaNaoEfetuada *)malloc(sizeof(PilhaNaoEfetuada));
-    if (novo == NULL) {
+    if (novo == NULL)
+    {
         fprintf(stderr, "Erro ao alocar memória para a pilha de não efetuadas.\n");
         return;
     }
@@ -549,9 +532,11 @@ void adicionaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha, Pedido *pedido) {
     *pilha = novo;
 }
 
-void adicionaPilhaDevolucao(PilhaDevolucao **pilha, Pedido *pedido) {
+void adicionaPilhaDevolucao(PilhaDevolucao **pilha, Pedido *pedido)
+{
     PilhaDevolucao *novo = (PilhaDevolucao *)malloc(sizeof(PilhaDevolucao));
-    if (novo == NULL) {
+    if (novo == NULL)
+    {
         fprintf(stderr, "Erro ao alocar memória para a pilha de devolução.\n");
         return;
     }
@@ -561,77 +546,79 @@ void adicionaPilhaDevolucao(PilhaDevolucao **pilha, Pedido *pedido) {
 }
 
 void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, PilhaDevolucao **pilhaDevolucao, int *pontos) {
-    char endereco[100];
-    printf("Digite o endereço para concluir a entrega: ");
-    scanf(" %[^\n]", endereco);
+    if (filas->inicio == NULL) {
+        printf("Não há filas de entregas para processar.\n");
+        return;
+    }
 
     FilaPorEndereco *filaAtual = filas->inicio;
-    while (filaAtual != NULL && strcmp(filaAtual->endereco, endereco) != 0) {
+    while (filaAtual != NULL) {
+        // Imprime o endereço e IDs dos pedidos na fila atual
+        printf("Endereço: %s\n", filaAtual->endereco);
+        Pedido *pedidoAtual = filaAtual->inicio;
+        if (pedidoAtual == NULL) {
+            printf("Nenhum pedido para o endereço %s.\n", filaAtual->endereco);
+            filaAtual = filaAtual->prox;
+            continue;
+        }
+
+        printf("Pedidos a serem entregues:\n");
+        while (pedidoAtual != NULL) {
+            printf("ID do Pedido: %d\n", pedidoAtual->id);
+            pedidoAtual = pedidoAtual->prox;
+        }
+
+        // Processa cada pedido na fila
+        pedidoAtual = filaAtual->inicio;
+        Pedido *pedidoParaRemover;
+        while (pedidoAtual != NULL) {
+            int id;
+            printf("Digite o ID do pedido entregue (separado por espaço, finalize com -1): ");
+            scanf("%d", &id);
+
+            if (id == -1) {
+                break;
+            }
+
+            if (pedidoAtual->id == id) {
+                // Remove o pedido da fila de entregas
+                removeEntrega(filas, id, filaAtual->endereco);
+
+                // Adiciona pontos pela entrega
+                (*pontos) += 5;
+            } else {
+                // Adiciona à pilha de não efetuadas
+                pedidoParaRemover = pedidoAtual;
+                pedidoAtual = pedidoAtual->prox;
+                adicionaPilhaNaoEfetuada(pilhaNaoEfetuada, pedidoParaRemover);
+                continue;
+            }
+
+            pedidoAtual = pedidoAtual->prox;
+        }
+
+        // Adiciona os pedidos não entregues para a pilha de devolução
+        while (*pilhaNaoEfetuada != NULL) {
+            PilhaNaoEfetuada *pedidoNaoEfetuado = *pilhaNaoEfetuada;
+            *pilhaNaoEfetuada = pedidoNaoEfetuado->prox;
+            adicionaPilhaDevolucao(pilhaDevolucao, pedidoNaoEfetuado->pedido);
+            free(pedidoNaoEfetuado);
+            (*pontos) -= 1;
+        }
+
+        // Avança para a próxima fila de entrega
         filaAtual = filaAtual->prox;
     }
 
-    if (filaAtual == NULL) {
-        printf("Nenhuma entrega encontrada para o endereço %s.\n", endereco);
-        return;
-    }
-
-    Pedido *pedidoAtual = filaAtual->inicio;
-    if (pedidoAtual == NULL) {
-        printf("Nenhum pedido para o endereço %s.\n", endereco);
-        return;
-    }
-
-    printf("Pedidos encontrados para o endereço %s:\n", endereco);
-    while (pedidoAtual != NULL) {
-        printf("ID do Pedido: %d\n", pedidoAtual->id);
-        pedidoAtual = pedidoAtual->prox;
-    }
-
-    printf("Digite os IDs dos pedidos entregues (separados por espaço, finalize com -1):\n");
-
-    pedidoAtual = filaAtual->inicio;
-    Pedido *pedidoParaRemover;
-    while (pedidoAtual != NULL) {
-        int id;
-        scanf("%d", &id);
-
-        if (id == -1) {
-            break;
-        }
-
-        // Verifica se o pedido atual tem o ID correspondente
-        if (pedidoAtual->id == id) {
-            // Remover pedido da fila de entregas
-            removeEntrega(filas, id, endereco);
-
-            // Adicionar pontos
-            (*pontos) += 5;
-        } else {
-            // Adicionar à pilha de não efetuadas
-            pedidoParaRemover = pedidoAtual;
-            pedidoAtual = pedidoAtual->prox;
-            adicionaPilhaNaoEfetuada(pilhaNaoEfetuada, pedidoParaRemover);
-        }
-
-        if (pedidoAtual != NULL && pedidoAtual->id != id) {
-            pedidoAtual = pedidoAtual->prox;
-        }
-    }
-
-    // Adiciona os pedidos não entregues para a pilha de devolução
-    while (*pilhaNaoEfetuada != NULL) {
-        PilhaNaoEfetuada *pedidoNaoEfetuado = *pilhaNaoEfetuada;
-        *pilhaNaoEfetuada = pedidoNaoEfetuado->prox;
-        adicionaPilhaDevolucao(pilhaDevolucao, pedidoNaoEfetuado->pedido);
-        free(pedidoNaoEfetuado);
-        (*pontos) -= 1;
-    }
-
-    printf("Entrega concluída. Pontos atuais: %d\n", *pontos);
+    // Tenta entregar pedidos na pilha de não efetuadas
+    processaPilhaNaoEfetuada(filas, pilhaNaoEfetuada, pilhaDevolucao, pontos);
 }
 
-void processaPilhaNaoEfetuada(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, PilhaDevolucao **pilhaDevolucao, int *pontos) {
-    while (*pilhaNaoEfetuada != NULL) {
+
+void processaPilhaNaoEfetuada(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, PilhaDevolucao **pilhaDevolucao, int *pontos)
+{
+    while (*pilhaNaoEfetuada != NULL)
+    {
         PilhaNaoEfetuada *pedidoNaoEfetuado = *pilhaNaoEfetuada;
         *pilhaNaoEfetuada = pedidoNaoEfetuado->prox;
 
@@ -648,8 +635,10 @@ void processaPilhaNaoEfetuada(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetu
     }
     printf("Pilha de não efetuadas processada. Pontos atuais: %d\n", *pontos);
 }
-void processaPilhaDevolucao(PilhaDevolucao **pilhaDevolucao) {
-    while (*pilhaDevolucao != NULL) {
+void processaPilhaDevolucao(PilhaDevolucao **pilhaDevolucao)
+{
+    while (*pilhaDevolucao != NULL)
+    {
         PilhaDevolucao *pedidoDevolucao = *pilhaDevolucao;
         *pilhaDevolucao = pedidoDevolucao->prox;
 
@@ -659,15 +648,18 @@ void processaPilhaDevolucao(PilhaDevolucao **pilhaDevolucao) {
     }
 }
 
-void imprimePilhaNaoEfetuada(PilhaNaoEfetuada *pilha) {
-    if (pilha == NULL) {
+void imprimePilhaNaoEfetuada(PilhaNaoEfetuada *pilha)
+{
+    if (pilha == NULL)
+    {
         printf("A pilha de pedidos não efetuados está vazia.\n");
         return;
     }
 
     printf("Pedidos não efetuados:\n");
     PilhaNaoEfetuada *atual = pilha;
-    while (atual != NULL) {
+    while (atual != NULL)
+    {
         printf("ID do Pedido: %d\n", atual->pedido->id);
         printf("Descrição do Pedido: %s\n", atual->pedido->descricao);
         printf("Status do Pedido: %s\n", atual->pedido->status);
@@ -675,15 +667,18 @@ void imprimePilhaNaoEfetuada(PilhaNaoEfetuada *pilha) {
     }
 }
 
-void imprimePilhaDevolucao(PilhaDevolucao *pilha) {
-    if (pilha == NULL) {
+void imprimePilhaDevolucao(PilhaDevolucao *pilha)
+{
+    if (pilha == NULL)
+    {
         printf("A pilha de devoluções está vazia.\n");
         return;
     }
 
     printf("Pedidos devolvidos:\n");
     PilhaDevolucao *atual = pilha;
-    while (atual != NULL) {
+    while (atual != NULL)
+    {
         printf("ID do Pedido: %d\n", atual->pedido->id);
         printf("Descrição do Pedido: %s\n", atual->pedido->descricao);
         printf("Status do Pedido: %s\n", atual->pedido->status);
