@@ -148,6 +148,7 @@ void menuEntregas(FilaFilas *filaFilas) {
     do {
         printf("\n===== Gestão de Entregas =====\n");
         printf("1. Imprimir Fila de Entregas\n");
+        printf("2. Realizar Entrega");
         printf("2. Voltar\n");
         printf("Escolha uma opção: ");
         scanf("%d", &opcao);
@@ -157,11 +158,14 @@ void menuEntregas(FilaFilas *filaFilas) {
                 imprimeFilaFilas(filaFilas);
                 break;
             case 2:
+                printf("Faz A função ");
+                break;
+            case 3:
                 printf("Voltando ao menu principal...\n");
                 break;
             default:
                 printf("Opção inválida! Tente novamente.\n");
                 break;
         }
-    } while (opcao != 2);
+    } while (opcao != 3);
 }
