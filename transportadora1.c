@@ -46,12 +46,12 @@ void adicionaCliente(ListaClientes *lista)
     cpf_ultimos_4[4] = '\0'; // Garantir que a string está terminada
     novo->id = atoi(cpf_ultimos_4);
 
-    printf("Digite o nome do cliente: ");    
+    printf("Digite o nome do cliente: ");
     scanf(" %[^\n]", novo->nome); // Corrigido para aceitar espaços
     formatarString(novo->nome);   // Formata o nome
 
     printf("Digite o endereco do cliente: ");
-    
+
     scanf(" %[^\n]", novo->endereco); // Corrigido para aceitar espaços
     formatarString(novo->endereco);   // Formata o endereço
 
@@ -183,7 +183,7 @@ void editaCliente(ListaClientes *lista, FilaFilas *filas)
             int cpf_length = strlen(novoCPF);
             if (cpf_length != 11)
             {
-                printf("CPF invalido! Deve conter 11 dígitos.\n");                
+                printf("CPF invalido! Deve conter 11 dígitos.\n");
                 return;
             }
             else
@@ -231,7 +231,6 @@ void adicionaPedido(ListaClientes *lista)
     printf("Digite o ID do cliente: ");
     scanf("%d", &id_cliente);
 
-
     Cliente *cliente = encontrarClientePorID(lista, id_cliente);
 
     if (cliente == NULL)
@@ -249,7 +248,7 @@ void adicionaPedido(ListaClientes *lista)
     printf("Digite o ID do pedido: ");
     scanf("%d", &novo->id);
     printf("Digite a descricao do pedido: ");
-    scanf(" %[^\n]", novo->descricao); // Corrigido para aceitar espaços    
+    scanf(" %[^\n]", novo->descricao); // Corrigido para aceitar espaços
 
     strcpy(novo->status, "preparando");
 
@@ -546,8 +545,6 @@ void removeEntrega(FilaFilas *filas, int id, const char *endereco)
     }
 }
 
-
-
 void imprimeFilaFilas(FilaFilas *filas)
 {
     FilaPorEndereco *atual = filas->inicio;
@@ -564,7 +561,6 @@ void imprimeFilaFilas(FilaFilas *filas)
     }
 }
 
-
 void inicializaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha)
 {
     *pilha = NULL;
@@ -575,11 +571,11 @@ void inicializaFilaDevolucao(FilaDevolucao **filadevolucao)
     *filadevolucao = NULL;
 }
 
-
-
-void adicionaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha, Pedido *pedido) {
+void adicionaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha, Pedido *pedido)
+{
     PilhaNaoEfetuada *novo = (PilhaNaoEfetuada *)malloc(sizeof(PilhaNaoEfetuada));
-    if (novo == NULL) {
+    if (novo == NULL)
+    {
         fprintf(stderr, "Erro ao alocar memória para a pilha de não efetuadas.\n");
         return;
     }
@@ -588,8 +584,10 @@ void adicionaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha, Pedido *pedido) {
     *pilha = novo;
 }
 
-void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido) {
-    if (pedido == NULL) {
+void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido)
+{
+    if (pedido == NULL)
+    {
         fprintf(stderr, "Pedido inválido.\n");
         return;
     }
@@ -598,38 +596,47 @@ void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido) {
     snprintf(pedido->status, sizeof(pedido->status), "devolvido");
 
     FilaDevolucao *novo = (FilaDevolucao *)malloc(sizeof(FilaDevolucao));
-    if (novo == NULL) {
+    if (novo == NULL)
+    {
         fprintf(stderr, "Erro ao alocar memória para a fila de devolução.\n");
         return;
     }
     novo->pedido = pedido;
     novo->prox = NULL;
 
-    if (*fila == NULL) {
+    if (*fila == NULL)
+    {
         // Se a fila estiver vazia, o novo elemento será o primeiro
         *fila = novo;
-    } else {
+    }
+    else
+    {
         // Caso contrário, percorre a fila até o último elemento e adiciona o novo elemento no final
         FilaDevolucao *temp = *fila;
-        while (temp->prox != NULL) {
+        while (temp->prox != NULL)
+        {
             temp = temp->prox;
         }
         temp->prox = novo;
     }
 }
 
-void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filadevolucao, int *pontos) {
-    if (filas->inicio == NULL) {
+void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filadevolucao, int *pontos)
+{
+    if (filas->inicio == NULL)
+    {
         printf("Não há filas de entregas para processar.\n");
         return;
     }
 
     FilaPorEndereco *filaAtual = filas->inicio;
-    while (filaAtual != NULL) {
+    while (filaAtual != NULL)
+    {
         printf("Endereço: %s\n", filaAtual->endereco);
         Pedido *pedidoAtual = filaAtual->inicio;
 
-        if (pedidoAtual == NULL) {
+        if (pedidoAtual == NULL)
+        {
             printf("Nenhum pedido para o endereço %s.\n", filaAtual->endereco);
             filaAtual = filaAtual->prox;
             continue;
@@ -639,18 +646,22 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Fila
         int entregasNoEndereco = 0;
 
         // Usar um loop para evitar alterar a lista durante a iteração
-        while (pedidoAtual != NULL) {
+        while (pedidoAtual != NULL)
+        {
             Pedido *proximoPedido = pedidoAtual->prox; // Salvar o próximo pedido
 
             int sorteio = rand() % 100;
-            if (sorteio < 20) {
+            if (sorteio < 20)
+            {
                 printf("Entrega do pedido %d realizada com sucesso.\n", pedidoAtual->id);
-                strcpy(pedidoAtual->status, "entregue");
+                strcpy(pedidoAtual->status, "entregue"); // Marcar como entregue
 
                 pedidoParaRemover = pedidoAtual;
                 removeEntrega(filas, pedidoParaRemover->id, filaAtual->endereco);
                 entregasNoEndereco++;
-            } else {
+            }
+            else
+            {
                 printf("Entrega do pedido %d não realizada. Adicionando à pilha de não efetuadas.\n", pedidoAtual->id);
                 pedidoParaRemover = pedidoAtual;
                 adicionaPilhaNaoEfetuada(pilhaNaoEfetuada, pedidoParaRemover);
@@ -668,13 +679,10 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Fila
     processaPilhaNaoEfetuada(filas, pilhaNaoEfetuada, filadevolucao, pontos);
 }
 
-
-
-
-
-
-void processaPilhaNaoEfetuada(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos) {
-    while (*pilhaNaoEfetuada != NULL) {
+void processaPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos)
+{
+    while (*pilhaNaoEfetuada != NULL)
+    {
         PilhaNaoEfetuada *pedidoNaoEfetuado = *pilhaNaoEfetuada;
         *pilhaNaoEfetuada = pedidoNaoEfetuado->prox;
 
@@ -682,11 +690,15 @@ void processaPilhaNaoEfetuada(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetu
         printf("Reprocessando pedido ID %d\n", pedido->id);
 
         int sorteio = rand() % 100;
-        if (sorteio < 20) {
+        if (sorteio < 20)
+        {
             printf("Reentrega do pedido %d realizada com sucesso.\n", pedido->id);
             strcpy(pedido->status, "entregue");
             (*pontos) += 3;
-        } else {
+            free(pedido); // Remover pedido da pilha de não efetuadas
+        }
+        else
+        {
             printf("Reentrega do pedido %d falhou. Enviando para devolução.\n", pedido->id);
             (*pontos) -= 1;
             adicionaFilaDevolucao(filaDevolucao, pedido);
@@ -697,50 +709,54 @@ void processaPilhaNaoEfetuada(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetu
     printf("Pilha de não efetuadas processada. Pontos atuais: %d\n", *pontos);
 }
 
-
-
 void processaFilaDevolucao(FilaDevolucao **filaDevolucao) {
-    while (*filaDevolucao != NULL) {
-        FilaDevolucao *pedidoDevolucao = *filaDevolucao;
-        *filaDevolucao = pedidoDevolucao->prox;
+    FilaDevolucao *atual = *filaDevolucao;
+    while (atual != NULL) {
+        Pedido *pedido = atual->pedido;
+        printf("Processando devolução do pedido ID %d\n", pedido->id);
+        
+        // Mudar o status do pedido para "devolvido"
+        strcpy(pedido->status, "devolvido");
 
-        printf("Pedido ID %d devolvido e removido.\n", pedidoDevolucao->pedido->id);
-        free(pedidoDevolucao->pedido);
-        free(pedidoDevolucao);
+        // Exibir status atualizado
+        printf("Pedido ID %d marcado como devolvido.\n", pedido->id);
+
+        // Avançar para o próximo pedido na fila
+        atual = atual->prox;
     }
 }
 
 
-
-
-
-
-void imprimeFilaDevolucao(FilaDevolucao *fila) {
-    if (fila == NULL) {
+void imprimeFilaDevolucao(FilaDevolucao *fila)
+{
+    if (fila == NULL)
+    {
         printf("A fila de devoluções está vazia.\n");
         return;
     }
 
     printf("Pedidos devolvidos:\n");
     FilaDevolucao *atual = fila;
-    while (atual != NULL) {
+    while (atual != NULL)
+    {
         printf("ID do Pedido: %d\n", atual->pedido->id);
         printf("Status do Pedido: %s\n", atual->pedido->status);
         atual = atual->prox;
     }
 }
 
-
-
-void imprimePilhaNaoEfetuada(PilhaNaoEfetuada *pilha) {
-    if (pilha == NULL) {
+void imprimePilhaNaoEfetuada(PilhaNaoEfetuada *pilha)
+{
+    if (pilha == NULL)
+    {
         printf("A pilha de pedidos nao efetuados esta vazia.\n");
         return;
     }
 
     printf("Pedidos não efetuados:\n");
     PilhaNaoEfetuada *atual = pilha;
-    while (atual != NULL) {
+    while (atual != NULL)
+    {
         printf("ID do Pedido: %d\n", atual->pedido->id);
         printf("Descrição do Pedido: %s\n", atual->pedido->descricao);
         printf("Status do Pedido: %s\n", atual->pedido->status);
