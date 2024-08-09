@@ -588,6 +588,7 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Pilh
     while (filaAtual != NULL) {
         printf("Endereço: %s\n", filaAtual->endereco);
         Pedido *pedidoAtual = filaAtual->inicio;
+        Pedido *pedidoAnterior = NULL;
 
         if (pedidoAtual == NULL) {
             printf("Nenhum pedido para o endereço %s.\n", filaAtual->endereco);
@@ -595,25 +596,33 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Pilh
             continue;
         }
 
-        Pedido *pedidoParaRemover;
         int entregasNoEndereco = 0;
 
-        // Usar um loop para evitar alterar a lista durante a iteração
         while (pedidoAtual != NULL) {
+            int sorteio = rand() % 100;
             Pedido *proximoPedido = pedidoAtual->prox; // Salvar o próximo pedido
 
-            int sorteio = rand() % 100;
             if (sorteio < 70) {
                 printf("Entrega do pedido %d realizada com sucesso.\n", pedidoAtual->id);
                 strcpy(pedidoAtual->status, "entregue");
 
-                pedidoParaRemover = pedidoAtual;
-                removeEntrega(filas, pedidoParaRemover->id, filaAtual->endereco);
+                // Remover o pedido da fila
+                if (pedidoAnterior == NULL) {
+                    filaAtual->inicio = proximoPedido;
+                } else {
+                    pedidoAnterior->prox = proximoPedido;
+                }
+
+                // Adicionar pontos e liberar memória
+                free(pedidoAtual);
                 entregasNoEndereco++;
             } else {
                 printf("Entrega do pedido %d não realizada. Adicionando à pilha de não efetuadas.\n", pedidoAtual->id);
-                pedidoParaRemover = pedidoAtual;
-                adicionaPilhaNaoEfetuada(pilhaNaoEfetuada, pedidoParaRemover);
+                // Adicionar o pedido à pilha de não efetuadas
+                adicionaPilhaNaoEfetuada(pilhaNaoEfetuada, pedidoAtual);
+                // Apenas avançar para o próximo pedido
+                pedidoAtual = proximoPedido;
+                continue;
             }
 
             pedidoAtual = proximoPedido; // Avançar para o próximo pedido
@@ -621,11 +630,19 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Pilh
 
         (*pontos) += 5 * entregasNoEndereco;
 
-        filaAtual = filaAtual->prox;
+        // Se a fila ficou vazia, removê-la
+        if (filaAtual->inicio == NULL) {
+            FilaPorEndereco *filaParaRemover = filaAtual;
+            filaAtual = filaAtual->prox;
+            removeFila(filas, filaParaRemover);
+        } else {
+            filaAtual = filaAtual->prox;
+        }
     }
 
     processaPilhaNaoEfetuada(filas, pilhaNaoEfetuada, pilhaDevolucao, pontos);
 }
+
 
 
 
