@@ -91,6 +91,8 @@ void processaPilhaDevolucao(PilhaDevolucao **pilhaDevolucao);
 void imprimePilhaNaoEfetuada(PilhaNaoEfetuada *pilha);
 void imprimePilhaDevolucao(PilhaDevolucao *pilha);
 void formatarString(char *str);
+void adicionaFilaNoFinal(FilaFilas *filas, FilaPorEndereco *novaFila);
+
 
 
 #endif // TRANSPORTADORA_H

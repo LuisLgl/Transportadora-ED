@@ -397,14 +397,33 @@ void imprimePedidos(Cliente *cliente)
     }
 }
 
+void adicionaFilaNoFinal(FilaFilas *filas, FilaPorEndereco *novaFila)
+{
+    if (filas->inicio == NULL)
+    {
+        filas->inicio = novaFila;
+    }
+    else
+    {
+        FilaPorEndereco *atual = filas->inicio;
+        while (atual->prox != NULL)
+        {
+            atual = atual->prox;
+        }
+        atual->prox = novaFila;
+    }
+}
+
 void adicionaEntrega(FilaFilas *filas, int id, const char *endereco)
 {
     FilaPorEndereco *atual = filas->inicio;
 
+    // Procura por uma fila existente para o endereço
     while (atual != NULL)
     {
         if (strcmp(atual->endereco, endereco) == 0)
         {
+            // Adiciona um novo pedido ao final da fila existente
             Pedido *novoPedido = (Pedido *)malloc(sizeof(Pedido));
             if (novoPedido == NULL)
             {
@@ -433,6 +452,7 @@ void adicionaEntrega(FilaFilas *filas, int id, const char *endereco)
         atual = atual->prox;
     }
 
+    // Cria uma nova fila para o endereço
     FilaPorEndereco *novaFila = (FilaPorEndereco *)malloc(sizeof(FilaPorEndereco));
     if (novaFila == NULL)
     {
@@ -441,21 +461,23 @@ void adicionaEntrega(FilaFilas *filas, int id, const char *endereco)
     }
 
     novaFila->inicio = NULL;
-    novaFila->prox = filas->inicio;
-    filas->inicio = novaFila;
-
+    novaFila->prox = NULL;
     strcpy(novaFila->endereco, endereco);
 
     Pedido *novoPedido = (Pedido *)malloc(sizeof(Pedido));
     if (novoPedido == NULL)
     {
         fprintf(stderr, "Erro ao alocar memoria para novo pedido de entrega.\n");
+        free(novaFila); // Liberar memória alocada para novaFila em caso de erro
         return;
     }
     novoPedido->id = id;
     novoPedido->prox = NULL;
 
     novaFila->inicio = novoPedido;
+
+    // Adiciona a nova fila no final da lista de filas
+    adicionaFilaNoFinal(filas, novaFila);
 
     printf("Nova fila de entregas criada para o endereco %s.\n", endereco);
 }
@@ -588,7 +610,6 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Pilh
     while (filaAtual != NULL) {
         printf("Endereço: %s\n", filaAtual->endereco);
         Pedido *pedidoAtual = filaAtual->inicio;
-        Pedido *pedidoAnterior = NULL;
 
         if (pedidoAtual == NULL) {
             printf("Nenhum pedido para o endereço %s.\n", filaAtual->endereco);
@@ -596,33 +617,25 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Pilh
             continue;
         }
 
+        Pedido *pedidoParaRemover;
         int entregasNoEndereco = 0;
 
+        // Usar um loop para evitar alterar a lista durante a iteração
         while (pedidoAtual != NULL) {
-            int sorteio = rand() % 100;
             Pedido *proximoPedido = pedidoAtual->prox; // Salvar o próximo pedido
 
+            int sorteio = rand() % 100;
             if (sorteio < 70) {
                 printf("Entrega do pedido %d realizada com sucesso.\n", pedidoAtual->id);
                 strcpy(pedidoAtual->status, "entregue");
 
-                // Remover o pedido da fila
-                if (pedidoAnterior == NULL) {
-                    filaAtual->inicio = proximoPedido;
-                } else {
-                    pedidoAnterior->prox = proximoPedido;
-                }
-
-                // Adicionar pontos e liberar memória
-                free(pedidoAtual);
+                pedidoParaRemover = pedidoAtual;
+                removeEntrega(filas, pedidoParaRemover->id, filaAtual->endereco);
                 entregasNoEndereco++;
             } else {
                 printf("Entrega do pedido %d não realizada. Adicionando à pilha de não efetuadas.\n", pedidoAtual->id);
-                // Adicionar o pedido à pilha de não efetuadas
-                adicionaPilhaNaoEfetuada(pilhaNaoEfetuada, pedidoAtual);
-                // Apenas avançar para o próximo pedido
-                pedidoAtual = proximoPedido;
-                continue;
+                pedidoParaRemover = pedidoAtual;
+                adicionaPilhaNaoEfetuada(pilhaNaoEfetuada, pedidoParaRemover);
             }
 
             pedidoAtual = proximoPedido; // Avançar para o próximo pedido
@@ -630,19 +643,11 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Pilh
 
         (*pontos) += 5 * entregasNoEndereco;
 
-        // Se a fila ficou vazia, removê-la
-        if (filaAtual->inicio == NULL) {
-            FilaPorEndereco *filaParaRemover = filaAtual;
-            filaAtual = filaAtual->prox;
-            removeFila(filas, filaParaRemover);
-        } else {
-            filaAtual = filaAtual->prox;
-        }
+        filaAtual = filaAtual->prox;
     }
 
     processaPilhaNaoEfetuada(filas, pilhaNaoEfetuada, pilhaDevolucao, pontos);
 }
-
 
 
 
