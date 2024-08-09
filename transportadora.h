@@ -34,8 +34,8 @@ typedef struct entrega {
 // Estrutura para representar uma fila de entregas para um endereço específico
 typedef struct filaPorEndereco {
     char endereco[150];            // Endereço associado à fila
-    Pedido *inicio;               // Ponteiro para o início da fila de entregas
-    Pedido *fim;                  // Ponteiro para o fim da fila de entregas
+    Pedido *inicio;                // Ponteiro para o início da fila de entregas
+    Pedido *fim;                   // Ponteiro para o fim da fila de entregas
     struct filaPorEndereco *prox;  // Ponteiro para a próxima fila de endereços
 } FilaPorEndereco;
 
@@ -45,16 +45,17 @@ typedef struct filaFilas {
     FilaPorEndereco *fim;          // Ponteiro para o fim da fila de filas
 } FilaFilas;
 
+// Estrutura para representar a pilha de pedidos não efetuados
 typedef struct pilhaNaoEfetuada {
-    Pedido *pedido;
-    struct pilhaNaoEfetuada *prox;
+    Pedido *pedido;                 // Pedido não efetuado
+    struct pilhaNaoEfetuada *prox;  // Ponteiro para o próximo pedido não efetuado
 } PilhaNaoEfetuada;
 
-typedef struct pilhaDevolucao {
-    Pedido *pedido;
-    struct pilhaDevolucao *prox;
-} PilhaDevolucao;
-
+// Estrutura para representar a fila de devoluções
+typedef struct filaDevolucao {
+    Pedido *pedido;                 // Pedido para devolução
+    struct filaDevolucao *prox;     // Ponteiro para o próximo pedido na fila de devolução
+} FilaDevolucao;
 
 // Protótipos de funções
 
@@ -80,19 +81,22 @@ void removeEntrega(FilaFilas *filas, int id_pedido, const char *endereco);
 void imprimeFilaFilas(FilaFilas *filas);
 void limparMemoria(ListaClientes *clientes, FilaFilas *filas);
 
-
+// Funções para Pilha de Não Efetuadas e Fila de Devolução
 void inicializaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha);
-void inicializaPilhaDevolucao(PilhaDevolucao **pilha);
+void inicializaFilaDevolucao(FilaDevolucao **filadevolucao);
 void adicionaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha, Pedido *pedido);
-void adicionaPilhaDevolucao(PilhaDevolucao **pilha, Pedido *pedido);
-void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, PilhaDevolucao **pilhaDevolucao, int *pontos);
-void processaPilhaNaoEfetuada(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, PilhaDevolucao **pilhaDevolucao, int *pontos);
-void processaPilhaDevolucao(PilhaDevolucao **pilhaDevolucao);
 void imprimePilhaNaoEfetuada(PilhaNaoEfetuada *pilha);
-void imprimePilhaDevolucao(PilhaDevolucao *pilha);
+
+void inicializaFilaDevolucao(FilaDevolucao **fila);
+void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido);
+void imprimeFilaDevolucao(FilaDevolucao *fila);
+
+void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos);
+void processaPilhaNaoEfetuada(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos);
+void processaFilaDevolucao(FilaDevolucao **fila);
+
+// Outras funções
 void formatarString(char *str);
 void adicionaFilaNoFinal(FilaFilas *filas, FilaPorEndereco *novaFila);
-
-
 
 #endif // TRANSPORTADORA_H

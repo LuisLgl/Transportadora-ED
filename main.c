@@ -4,14 +4,14 @@
 
 void menuClientes(ListaClientes *listaClientes, FilaFilas *filaFilas);
 void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas);
-void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, PilhaDevolucao *pilhaDevolucao, int *pontos);
+void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, FilaDevolucao *filadevolucao, int *pontos);
 
 int main()
 {
     ListaClientes listaClientes;
     FilaFilas filaFilas;
     PilhaNaoEfetuada *pilhaNaoEfetuada;
-    PilhaDevolucao *pilhaDevolucao;
+    FilaDevolucao *filadevolucao;
     int opcao;
     int pontos = 0;
 
@@ -19,7 +19,7 @@ int main()
     inicializaListaClientes(&listaClientes);
     inicializaFilaFilas(&filaFilas);
     inicializaPilhaNaoEfetuada(&pilhaNaoEfetuada);
-    inicializaPilhaDevolucao(&pilhaDevolucao);
+    inicializaFilaDevolucao(&filadevolucao);
 
     do
     {
@@ -41,7 +41,7 @@ int main()
             menuPedidos(&listaClientes, &filaFilas);
             break;
         case 3:
-            menuEntregas(&filaFilas, pilhaNaoEfetuada, pilhaDevolucao, &pontos);
+            menuEntregas(&filaFilas, pilhaNaoEfetuada, filadevolucao, &pontos);
             break;
         case 4:
             printf("Pontos atuais: %d\n", pontos);
@@ -164,7 +164,7 @@ void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas)
     } while (opcao != 5);
 }
 
-void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, PilhaDevolucao *pilhaDevolucao, int *pontos)
+void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, FilaDevolucao *filadevolucao, int *pontos)
 {
     int opcao;
 
@@ -184,10 +184,10 @@ void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, Pilh
             imprimeFilaFilas(filaFilas);
             break;
             case 2:
-            imprimePilhaDevolucao(pilhaDevolucao);
+            imprimeFilaDevolucao(filadevolucao);
             break;
         case 3:
-            concluirEntrega(filaFilas, &pilhaNaoEfetuada, &pilhaDevolucao, pontos);
+            concluirEntrega(filaFilas, &pilhaNaoEfetuada, &filadevolucao, pontos);
             break;
         case 4:
             printf("Voltando ao menu principal...\n");
