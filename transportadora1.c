@@ -542,6 +542,7 @@ void imprimeFilaFilas(FilaFilas *filas)
     }
 }
 
+
 void inicializaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha)
 {
     *pilha = NULL;
@@ -597,22 +598,25 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Pilh
         Pedido *pedidoParaRemover;
         int entregasNoEndereco = 0;
 
+        // Usar um loop para evitar alterar a lista durante a iteração
         while (pedidoAtual != NULL) {
+            Pedido *proximoPedido = pedidoAtual->prox; // Salvar o próximo pedido
+
             int sorteio = rand() % 100;
             if (sorteio < 70) {
                 printf("Entrega do pedido %d realizada com sucesso.\n", pedidoAtual->id);
                 strcpy(pedidoAtual->status, "entregue");
 
                 pedidoParaRemover = pedidoAtual;
-                pedidoAtual = pedidoAtual->prox;
                 removeEntrega(filas, pedidoParaRemover->id, filaAtual->endereco);
                 entregasNoEndereco++;
             } else {
                 printf("Entrega do pedido %d não realizada. Adicionando à pilha de não efetuadas.\n", pedidoAtual->id);
                 pedidoParaRemover = pedidoAtual;
-                pedidoAtual = pedidoAtual->prox;
                 adicionaPilhaNaoEfetuada(pilhaNaoEfetuada, pedidoParaRemover);
             }
+
+            pedidoAtual = proximoPedido; // Avançar para o próximo pedido
         }
 
         (*pontos) += 5 * entregasNoEndereco;
@@ -622,6 +626,7 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Pilh
 
     processaPilhaNaoEfetuada(filas, pilhaNaoEfetuada, pilhaDevolucao, pontos);
 }
+
 
 
 
