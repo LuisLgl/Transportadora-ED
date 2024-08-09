@@ -48,8 +48,7 @@ int main()
             break;
         case 5:
             printf("Saindo...\n");
-            // Liberação de memória (descomente se necessário)
-            // limparMemoria(&listaClientes, &filaFilas, &pilhaNaoEfetuada, &pilhaDevolucao);
+            limparMemoria(&listaClientes, &filaFilas, &pilhaNaoEfetuada, &filadevolucao);
             break;
         default:
             printf("Opcao invalida! Tente novamente.\n");
@@ -57,6 +56,7 @@ int main()
         }
     } while (opcao != 5);
 
+    limparMemoria(&listaClientes, &filaFilas, &pilhaNaoEfetuada, &filadevolucao);
     return 0;
 }
 
@@ -110,7 +110,8 @@ void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas)
         printf("2. Remover Pedido\n");
         printf("3. Editar Pedido\n");
         printf("4. Despachar Pedido\n");
-        printf("5. Voltar\n");
+        printf("5. Despachar todos os pedidos\n");
+        printf("6. Voltar\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
@@ -155,13 +156,17 @@ void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas)
             despacharPedido(listaClientes, filaFilas);
             break;
         case 5:
+            despacharTudo(listaClientes, filaFilas);
+
+            break;
+        case 6:
             printf("Voltando ao menu principal...\n");
             break;
         default:
             printf("Opcao invalida! Tente novamente.\n");
             break;
         }
-    } while (opcao != 5);
+    } while (opcao != 6);
 }
 
 void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, FilaDevolucao *filadevolucao, int *pontos)
@@ -183,7 +188,7 @@ void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, Fila
         case 1:
             imprimeFilaFilas(filaFilas);
             break;
-            case 2:
+        case 2:
             imprimeFilaDevolucao(filadevolucao);
             break;
         case 3:

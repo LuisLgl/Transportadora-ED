@@ -79,7 +79,6 @@ void inicializaFilaFilas(FilaFilas *filas);
 void adicionaEntrega(FilaFilas *filas, int id_pedido, const char *endereco);
 void removeEntrega(FilaFilas *filas, int id_pedido, const char *endereco);
 void imprimeFilaFilas(FilaFilas *filas);
-void limparMemoria(ListaClientes *clientes, FilaFilas *filas);
 
 // Funções para Pilha de Não Efetuadas e Fila de Devolução
 void inicializaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha);
@@ -97,6 +96,7 @@ void processaFilaDevolucao(FilaDevolucao **fila);
 
 // Outras funções
 void formatarString(char *str);
+void despacharTudo(ListaClientes *lista, FilaFilas *filas);
 void adicionaFilaNoFinal(FilaFilas *filas, FilaPorEndereco *novaFila);
-
+void limparMemoria(ListaClientes *listaClientes, FilaFilas *filaFilas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao);
 #endif // TRANSPORTADORA_H

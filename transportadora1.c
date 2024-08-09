@@ -18,10 +18,13 @@ void inicializaFilaFilas(FilaFilas *filas)
     filas->inicio = NULL;
 }
 
-int verificaCpfRepetido(Cliente *listaClientes, const char *cpf) {
+int verificaCpfRepetido(Cliente *listaClientes, const char *cpf)
+{
     Cliente *atual = listaClientes;
-    while (atual != NULL) {
-        if (strcmp(atual->cpf, cpf) == 0) {
+    while (atual != NULL)
+    {
+        if (strcmp(atual->cpf, cpf) == 0)
+        {
             return 1; // CPF já existe
         }
         atual = atual->prox;
@@ -29,10 +32,13 @@ int verificaCpfRepetido(Cliente *listaClientes, const char *cpf) {
     return 0; // CPF não encontrado
 }
 
-int verificaIdRepetido(Cliente *listaClientes, int id) {
+int verificaIdRepetido(Cliente *listaClientes, int id)
+{
     Cliente *atual = listaClientes;
-    while (atual != NULL) {
-        if (atual->id == id) {
+    while (atual != NULL)
+    {
+        if (atual->id == id)
+        {
             return 1; // ID já existe
         }
         atual = atual->prox;
@@ -40,10 +46,12 @@ int verificaIdRepetido(Cliente *listaClientes, int id) {
     return 0; // ID não encontrado
 }
 
-void adicionaCliente(ListaClientes *lista) {
+void adicionaCliente(ListaClientes *lista)
+{
     char numero[6];
     Cliente *novo = (Cliente *)malloc(sizeof(Cliente));
-    if (novo == NULL) {
+    if (novo == NULL)
+    {
         fprintf(stderr, "\nErro ao alocar memoria para novo cliente.\n");
         return;
     }
@@ -51,14 +59,16 @@ void adicionaCliente(ListaClientes *lista) {
     printf("\nDigite o CPF do cliente (apenas numeros): ");
     scanf("%s", novo->cpf);
 
-    if (verificaCpfRepetido(lista->inicio, novo->cpf)) {
-        printf("\nErro: O CPF %s já está cadastrado.\n", novo->cpf);
+    if (verificaCpfRepetido(lista->inicio, novo->cpf))
+    {
+        printf("\nErro: O CPF %s ja esta cadastrado.\n", novo->cpf);
         free(novo);
         return;
     }
 
     int cpf_length = strlen(novo->cpf);
-    if (cpf_length != 11) {
+    if (cpf_length != 11)
+    {
         printf("\nCPF invalido! Deve conter 11 dígitos.\n");
         free(novo);
         return;
@@ -71,7 +81,8 @@ void adicionaCliente(ListaClientes *lista) {
     novo->id = atoi(cpf_ultimos_4);
 
     // Se o ID for repetido, adiciona um número aleatório a ele
-    while (verificaIdRepetido(lista->inicio, novo->id)) {
+    while (verificaIdRepetido(lista->inicio, novo->id))
+    {
         novo->id += rand() % 1000; // Adiciona um número aleatório entre 0 e 999
     }
 
@@ -89,8 +100,25 @@ void adicionaCliente(ListaClientes *lista) {
     strncat(novo->endereco, numero, sizeof(novo->endereco) - strlen(novo->endereco) - 1);
 
     novo->pedidos = NULL;
-    novo->prox = lista->inicio;
-    lista->inicio = novo;
+    novo->prox = NULL;
+
+    // Adiciona o novo cliente ao final da lista
+    if (lista->inicio == NULL)
+    {
+        // Lista vazia, o novo cliente será o primeiro
+        lista->inicio = novo;
+    }
+    else
+    {
+        // Percorre até o final da lista
+        Cliente *atual = lista->inicio;
+        while (atual->prox != NULL)
+        {
+            atual = atual->prox;
+        }
+        // Adiciona o novo cliente no final da lista
+        atual->prox = novo;
+    }
 
     printf("\nCliente adicionado com sucesso!\n");
     printf("ID: %d, CPF: %s, Nome: %s, Endereco: %s\n", novo->id, novo->cpf, novo->nome, novo->endereco);
@@ -234,15 +262,18 @@ void editaCliente(ListaClientes *lista, FilaFilas *filas)
 void imprimeClientes(ListaClientes *lista)
 {
     Cliente *atual = lista->inicio;
-    if(atual == NULL) printf("\nNenhum cliente cadastrado!\n");
-    else{
-    while (atual != NULL)
+    if (atual == NULL)
     {
-        printf("\nID: %d, Nome: %s, Endereco: %s\n", atual->id, atual->nome, atual->endereco);
-        imprimePedidos(atual);
-        atual = atual->prox;
-        
+        printf("\nNenhum cliente cadastrado!\n");
     }
+    else
+    {
+        while (atual != NULL)
+        {
+            printf("\nID: %d, Nome: %s, Endereco: %s\n", atual->id, atual->nome, atual->endereco);
+            imprimePedidos(atual);
+            atual = atual->prox;
+        }
     }
 }
 
@@ -256,10 +287,13 @@ Cliente *encontrarClientePorID(ListaClientes *lista, int id_cliente)
     return cliente;
 }
 
-int verificaIDPedidoRepetido(Pedido *listaPedidos, int id_pedido) {
+int verificaIDPedidoRepetido(Pedido *listaPedidos, int id_pedido)
+{
     Pedido *atual = listaPedidos;
-    while (atual != NULL) {
-        if (atual->id == id_pedido) {
+    while (atual != NULL)
+    {
+        if (atual->id == id_pedido)
+        {
             return 1; // ID já existe
         }
         atual = atual->prox;
@@ -267,20 +301,23 @@ int verificaIDPedidoRepetido(Pedido *listaPedidos, int id_pedido) {
     return 0; // ID não encontrado
 }
 
-void adicionaPedido(ListaClientes *lista) {
+void adicionaPedido(ListaClientes *lista)
+{
     int id_cliente;
     printf("\nDigite o ID do cliente: ");
     scanf("%d", &id_cliente);
 
     Cliente *cliente = encontrarClientePorID(lista, id_cliente);
 
-    if (cliente == NULL) {
+    if (cliente == NULL)
+    {
         printf("Cliente nao encontrado.\n");
         return;
     }
 
     Pedido *novo = (Pedido *)malloc(sizeof(Pedido));
-    if (novo == NULL) {
+    if (novo == NULL)
+    {
         fprintf(stderr, "Erro ao alocar memoria para novo pedido.\n");
         return;
     }
@@ -289,8 +326,9 @@ void adicionaPedido(ListaClientes *lista) {
     printf("Digite o ID do pedido: ");
     scanf("%d", &id_pedido);
 
-    if (verificaIDPedidoRepetido(cliente->pedidos, id_pedido)) {
-        printf("Erro: O ID do pedido %d já existe para este cliente.\n", id_pedido);
+    if (verificaIDPedidoRepetido(cliente->pedidos, id_pedido))
+    {
+        printf("Erro: O ID do pedido %d ja existe para este cliente.\n", id_pedido);
         free(novo);
         return;
     }
@@ -444,15 +482,16 @@ void editaPedido(Cliente *cliente)
 void imprimePedidos(Cliente *cliente)
 {
     Pedido *pedido = cliente->pedidos;
-    if(pedido == NULL)  printf("Sem pedidos cadastrados!\n");
-    else{
-    printf("\nPedidos do Cliente %s:\n", cliente->nome);
-    while (pedido != NULL)
+    if (pedido == NULL)
+        printf("Sem pedidos cadastrados!\n");
+    else
     {
-        printf("ID: %d, Descricao: %s, Status: %s\n", pedido->id, pedido->descricao, pedido->status);
-        pedido = pedido->prox;
-        
-    }
+        printf("\nPedidos do Cliente %s:\n", cliente->nome);
+        while (pedido != NULL)
+        {
+            printf("ID: %d, Descricao: %s, Status: %s\n", pedido->id, pedido->descricao, pedido->status);
+            pedido = pedido->prox;
+        }
     }
 }
 
@@ -607,6 +646,12 @@ void removeEntrega(FilaFilas *filas, int id, const char *endereco)
 
 void imprimeFilaFilas(FilaFilas *filas)
 {
+    if (filas->inicio == NULL)
+    {
+        printf("\nNenhuma entrega na fila.\n");
+        return;
+    }
+
     FilaPorEndereco *atual = filas->inicio;
     while (atual != NULL)
     {
@@ -682,7 +727,7 @@ void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido)
 }
 
 void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filadevolucao, int *pontos)
-{
+{    
     if (filas->inicio == NULL)
     {
         printf("\nNao ha filas de entregas para processar.\n");
@@ -692,7 +737,7 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Fila
     FilaPorEndereco *filaAtual = filas->inicio;
     while (filaAtual != NULL)
     {
-        printf("\nEndereço: %s\n", filaAtual->endereco);
+        printf("\nEndereco: %s\n", filaAtual->endereco);
         Pedido *pedidoAtual = filaAtual->inicio;
 
         if (pedidoAtual == NULL)
@@ -703,7 +748,6 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Fila
         }
 
         Pedido *pedidoParaRemover;
-        int entregasNoEndereco = 0;
 
         // Usar um loop para evitar alterar a lista durante a iteração
         while (pedidoAtual != NULL)
@@ -714,27 +758,28 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Fila
             if (sorteio < 20)
             {
                 printf("Entrega do pedido %d realizada com sucesso.\n", pedidoAtual->id);
+                 (*pontos) += 5;
                 strcpy(pedidoAtual->status, "entregue"); // Marcar como entregue
 
                 pedidoParaRemover = pedidoAtual;
                 removeEntrega(filas, pedidoParaRemover->id, filaAtual->endereco);
-                entregasNoEndereco++;
             }
             else
             {
                 printf("Entrega do pedido %d nao realizada. Adicionando a pilha de nao efetuadas.\n", pedidoAtual->id);
                 pedidoParaRemover = pedidoAtual;
                 adicionaPilhaNaoEfetuada(pilhaNaoEfetuada, pedidoParaRemover);
+                removeEntrega(filas, pedidoParaRemover->id, filaAtual->endereco);
             }
 
             pedidoAtual = proximoPedido; // Avançar para o próximo pedido
         }
 
-        (*pontos) += 5 * entregasNoEndereco;
+       
 
         filaAtual = filaAtual->prox;
     }
-        printf("\nFila de entregas processada. Pontos atuais: %d\n", *pontos);
+    printf("\nFila de entregas processada. Pontos atuais: %d\n", *pontos);
 
     // processaPilhaNaoEfetuada(filas, pilhaNaoEfetuada, pilhaDevolucao, pontos);
     processaPilhaNaoEfetuada(pilhaNaoEfetuada, filadevolucao, pontos);
@@ -754,7 +799,8 @@ void processaPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao
         if (sorteio < 20)
         {
             printf("Reentrega do pedido %d realizada com sucesso.\n", pedido->id);
-            strcpy(pedido->status, "entregue");
+            strcpy(pedido->status, "entregue"); // Marcar como entregue
+
             (*pontos) += 3;
             free(pedido); // Remover pedido da pilha de não efetuadas
         }
@@ -770,12 +816,14 @@ void processaPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao
     printf("\nPilha de nao efetuadas processada. Pontos atuais: %d\n", *pontos);
 }
 
-void processaFilaDevolucao(FilaDevolucao **filaDevolucao) {
+void processaFilaDevolucao(FilaDevolucao **filaDevolucao)
+{
     FilaDevolucao *atual = *filaDevolucao;
-    while (atual != NULL) {
+    while (atual != NULL)
+    {
         Pedido *pedido = atual->pedido;
         printf("Processando devolucao do pedido ID %d\n", pedido->id);
-        
+
         // Mudar o status do pedido para "devolvido"
         strcpy(pedido->status, "devolvido");
 
@@ -787,20 +835,19 @@ void processaFilaDevolucao(FilaDevolucao **filaDevolucao) {
     }
 }
 
-
 void imprimeFilaDevolucao(FilaDevolucao *fila)
 {
     if (fila == NULL)
     {
-        printf("A fila de devolucoes esta vazia.\n");
+        printf("\nA fila de devolucoes esta vazia.\n");
         return;
     }
 
-    printf("Pedidos devolvidos:\n");
+    printf("\nPedidos devolvidos:\n");
     FilaDevolucao *atual = fila;
     while (atual != NULL)
     {
-        printf("ID do Pedido: %d\n", atual->pedido->id);
+        printf("\nID do Pedido: %d\n", atual->pedido->id);
         printf("Status do Pedido: %s\n", atual->pedido->status);
         atual = atual->prox;
     }
@@ -853,4 +900,139 @@ void formatarString(char *str)
             str[i] = tolower((unsigned char)str[i]);
         }
     }
+}
+
+void despacharTudo(ListaClientes *lista, FilaFilas *filas)
+{
+    if (lista == NULL || filas == NULL)
+    {
+        printf("\nErro: Lista de clientes ou fila de entregas é nula.\n");
+        return;
+    }
+
+    Cliente *clienteAtual = lista->inicio;
+    if (clienteAtual == NULL)
+    {
+        printf("\nNenhum cliente encontrado na lista.\n");
+        return;
+    }
+
+    // Percorre todos os clientes
+    while (clienteAtual != NULL)
+    {
+        printf("\nProcessando cliente ID %d.\n", clienteAtual->id);
+
+        Pedido *pedidoAtual = clienteAtual->pedidos;
+        if (pedidoAtual == NULL)
+        {
+            printf("Nenhum pedido encontrado para o cliente ID %d.\n", clienteAtual->id);
+        }
+
+        // Percorre todos os pedidos do cliente
+        while (pedidoAtual != NULL)
+        {
+            if (strcmp(pedidoAtual->status, "preparando") == 0) // Verifica se o pedido está em "preparando"
+            {
+                // Atualiza o status do pedido para 'despachado'
+                strcpy(pedidoAtual->status, "despachado");
+                printf("Pedido com ID %d do cliente %d despachado com sucesso.\n",
+                       pedidoAtual->id, clienteAtual->id);
+
+                // Adiciona o pedido à fila de entregas, mantendo a ordem FIFO
+                adicionaEntrega(filas, pedidoAtual->id, clienteAtual->endereco);
+            }
+            else
+            {
+                printf("Pedido com ID %d já despachado ou entregue. Status atual: %s\n",
+                       pedidoAtual->id, pedidoAtual->status);
+            }
+
+            pedidoAtual = pedidoAtual->prox; // Move para o próximo pedido
+        }
+
+        clienteAtual = clienteAtual->prox; // Move para o próximo cliente
+    }
+
+    printf("\nDespacho completo.\n");
+}
+
+void limparMemoria(ListaClientes *listaClientes, FilaFilas *filaFilas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao)
+{
+    // Limpar lista de clientes
+    Cliente *atualCliente = listaClientes->inicio;
+    while (atualCliente != NULL)
+    {
+        Cliente *clienteRemover = atualCliente;
+        atualCliente = atualCliente->prox;
+
+        // Limpar pedidos do cliente
+        Pedido *atualPedido = clienteRemover->pedidos;
+        while (atualPedido != NULL)
+        {
+            Pedido *pedidoRemover = atualPedido;
+            atualPedido = atualPedido->prox;
+            free(pedidoRemover);
+        }
+
+        free(clienteRemover);
+    }
+
+    // Limpar fila de filas
+    FilaPorEndereco *atualFila = filaFilas->inicio;
+    while (atualFila != NULL)
+    {
+        FilaPorEndereco *filaRemover = atualFila;
+        atualFila = atualFila->prox;
+
+        // Limpar pedidos na fila
+        Pedido *atualPedido = filaRemover->inicio;
+        while (atualPedido != NULL)
+        {
+            Pedido *pedidoRemover = atualPedido;
+            atualPedido = atualPedido->prox;
+            free(pedidoRemover);
+        }
+
+        free(filaRemover);
+    }
+
+    // Limpar pilha de não efetuadas
+    PilhaNaoEfetuada *atualPilha = *pilhaNaoEfetuada;
+    while (atualPilha != NULL)
+    {
+        PilhaNaoEfetuada *topo = atualPilha;
+        atualPilha = atualPilha->prox;
+
+        // Limpar pedidos na pilha
+        Pedido *atualPedido = topo->pedido; // Supondo que a pilha armazena pedidos
+        while (atualPedido != NULL)
+        {
+            Pedido *pedidoRemover = atualPedido;
+            atualPedido = atualPedido->prox;
+            free(pedidoRemover);
+        }
+
+        free(topo);
+    }
+    *pilhaNaoEfetuada = NULL; // Atualizar o ponteiro da pilha para NULL
+
+    // Limpar fila de devoluções
+    FilaDevolucao *atualDevolucao = *filaDevolucao;
+    while (atualDevolucao != NULL)
+    {
+        FilaDevolucao *devolucaoRemover = atualDevolucao;
+        atualDevolucao = atualDevolucao->prox;
+
+        // Limpar pedidos na fila de devoluções
+        Pedido *atualPedido = devolucaoRemover->pedido; // Supondo que a fila de devoluções armazena pedidos
+        while (atualPedido != NULL)
+        {
+            Pedido *pedidoRemover = atualPedido;
+            atualPedido = atualPedido->prox;
+            free(pedidoRemover);
+        }
+
+        free(devolucaoRemover);
+    }
+    *filaDevolucao = NULL; // Atualizar o ponteiro da fila de devoluções para NULL
 }
