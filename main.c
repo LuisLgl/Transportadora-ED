@@ -66,13 +66,13 @@ void menuClientes(ListaClientes *listaClientes, FilaFilas *filaFilas)
 
     do
     {
-        printf("\n===== Gestão de Clientes =====\n");
+        printf("\n===== Gestao de Clientes =====\n");
         printf("1. Adicionar Cliente\n");
         printf("2. Remover Cliente\n");
         printf("3. Editar Cliente\n");
         printf("4. Imprimir Clientes\n");
         printf("5. Voltar\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
         switch (opcao)
@@ -175,7 +175,7 @@ void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, Fila
         printf("2. Imprimir Pedidos Devolvidos\n");
         printf("3. Realizar Entrega\n");
         printf("4. Voltar\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
         switch (opcao)
