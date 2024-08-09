@@ -676,7 +676,7 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Fila
     }
 
     // processaPilhaNaoEfetuada(filas, pilhaNaoEfetuada, pilhaDevolucao, pontos);
-    processaPilhaNaoEfetuada(filas, pilhaNaoEfetuada, filadevolucao, pontos);
+    processaPilhaNaoEfetuada(pilhaNaoEfetuada, filadevolucao, pontos);
 }
 
 void processaPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos)

@@ -92,7 +92,7 @@ void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido);
 void imprimeFilaDevolucao(FilaDevolucao *fila);
 
 void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos);
-void processaPilhaNaoEfetuada(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos);
+void processaPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos);
 void processaFilaDevolucao(FilaDevolucao **fila);
 
 // Outras funções
