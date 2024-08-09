@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 #include "transportadora.h"
 
@@ -45,7 +46,7 @@ void adicionaCliente(ListaClientes *lista)
     cpf_ultimos_4[4] = '\0'; // Garantir que a string está terminada
     novo->id = atoi(cpf_ultimos_4);
 
-    printf("Digite o nome do cliente: ");
+    printf("Digite o nome do cliente: ");    
     scanf(" %[^\n]", novo->nome); // Corrigido para aceitar espaços
     formatarString(novo->nome);   // Formata o nome
 
@@ -230,13 +231,13 @@ void adicionaPedido(ListaClientes *lista)
     printf("Digite o ID do cliente: ");
     scanf("%d", &id_cliente);
 
+
     Cliente *cliente = encontrarClientePorID(lista, id_cliente);
 
     if (cliente == NULL)
     {
-        printf("Cliente nao encontrado. Adicionando novo cliente...\n");
-        adicionaCliente(lista);
-        cliente = encontrarClientePorID(lista, id_cliente);
+        printf("Cliente nao encontrado.\n");
+        return;
     }
 
     Pedido *novo = (Pedido *)malloc(sizeof(Pedido));
@@ -248,8 +249,7 @@ void adicionaPedido(ListaClientes *lista)
     printf("Digite o ID do pedido: ");
     scanf("%d", &novo->id);
     printf("Digite a descricao do pedido: ");
-    gets(novo->descricao); // Corrigido para aceitar espaços
-    getchar();
+    scanf(" %[^\n]", novo->descricao); // Corrigido para aceitar espaços    
 
     strcpy(novo->status, "preparando");
 
@@ -570,6 +570,7 @@ void adicionaPilhaDevolucao(PilhaDevolucao **pilha, Pedido *pedido)
     *pilha = novo;
 }
 
+
 void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, PilhaDevolucao **pilhaDevolucao, int *pontos)
 {
     if (filas->inicio == NULL)
@@ -603,30 +604,27 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Pilh
         Pedido *pedidoParaRemover;
         while (pedidoAtual != NULL)
         {
-            int id;
-            printf("Digite o ID do pedido entregue (separado por espaço, finalize com -1): ");
-            scanf("%d", &id);
-
-            if (id == -1)
+            // Sorteia se a entrega será realizada
+            int sorteio = rand() % 100;  // Gera um número aleatório entre 0 e 99
+            if (sorteio < 70)
             {
-                break;
-            }
+                // 70% de chance de realizar a entrega
+                printf("Entrega do pedido %d realizada com sucesso.\n", pedidoAtual->id);
 
-            if (pedidoAtual->id == id)
-            {
                 // Remove o pedido da fila de entregas
-                removeEntrega(filas, id, filaAtual->endereco);
+                removeEntrega(filas, pedidoAtual->id, filaAtual->endereco);
 
                 // Adiciona pontos pela entrega
                 (*pontos) += 5;
             }
             else
             {
+                // 30% de chance de não realizar a entrega
+                printf("Entrega do pedido %d não realizada. Adicionando à pilha de não efetuadas.\n", pedidoAtual->id);
+
                 // Adiciona à pilha de não efetuadas
                 pedidoParaRemover = pedidoAtual;
-                pedidoAtual = pedidoAtual->prox;
                 adicionaPilhaNaoEfetuada(pilhaNaoEfetuada, pedidoParaRemover);
-                continue;
             }
 
             pedidoAtual = pedidoAtual->prox;
@@ -649,6 +647,8 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Pilh
     // Tenta entregar pedidos na pilha de não efetuadas
     processaPilhaNaoEfetuada(filas, pilhaNaoEfetuada, pilhaDevolucao, pontos);
 }
+
+
 
 void processaPilhaNaoEfetuada(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, PilhaDevolucao **pilhaDevolucao, int *pontos)
 {
