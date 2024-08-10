@@ -639,9 +639,40 @@ void removeEntrega(FilaFilas *filas, int id, const char *endereco)
         {
             anterior->prox = atual->prox;
         }
-        
+
         printf("Fila de entregas para o endereco %s foi removida pois nao possui mais pedidos.\n", endereco);
     }
+}
+
+void removeTodosOsPedidos(FilaFilas *filas)
+{
+    FilaPorEndereco *atual = filas->inicio;
+    FilaPorEndereco *filaProxima;
+
+    while (atual != NULL)
+    {
+        // Remove todos os pedidos da fila atual
+        Pedido *pedidoAtual = atual->inicio;
+        Pedido *pedidoProximo;
+
+        while (pedidoAtual != NULL)
+        {
+            pedidoProximo = pedidoAtual->prox;
+            free(pedidoAtual);
+            pedidoAtual = pedidoProximo;
+        }
+
+        // Esvazia a fila
+        atual->inicio = NULL;
+
+        // Passa para a próxima fila
+        filaProxima = atual->prox;
+        free(atual); // Libera a memória da fila
+        atual = filaProxima;
+    }
+
+    // Após remover todas as filas
+    filas->inicio = NULL;
 }
 
 void imprimeFilaFilas(FilaFilas *filas)
@@ -684,9 +715,11 @@ void adicionaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha, Pedido *pedido)
         fprintf(stderr, "Erro ao alocar memoria para a pilha de nao efetuadas.\n");
         return;
     }
+    strcpy(pedido->status, "entregue");
     novo->pedido = pedido;
     novo->prox = *pilha;
     *pilha = novo;
+    
 }
 
 void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido)
@@ -698,7 +731,6 @@ void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido)
     }
 
     // Atualiza o status do pedido para "devolvido"
-    snprintf(pedido->status, sizeof(pedido->status), "devolvido");
 
     FilaDevolucao *novo = (FilaDevolucao *)malloc(sizeof(FilaDevolucao));
     if (novo == NULL)
@@ -706,6 +738,8 @@ void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido)
         fprintf(stderr, "Erro ao alocar memoria para a fila de devolucao.\n");
         return;
     }
+       strcpy(pedido->status, "devolvido");
+
     novo->pedido = pedido;
     novo->prox = NULL;
 
@@ -727,7 +761,7 @@ void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido)
 }
 
 void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filadevolucao, int *pontos)
-{    
+{
     if (filas->inicio == NULL)
     {
         printf("\nNao ha filas de entregas para processar.\n");
@@ -755,27 +789,24 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Fila
             Pedido *proximoPedido = pedidoAtual->prox; // Salvar o próximo pedido
 
             int sorteio = rand() % 100;
-            if (sorteio < 20)
+            if (sorteio < 70)
             {
                 printf("Entrega do pedido %d realizada com sucesso.\n", pedidoAtual->id);
-                 (*pontos) += 5;
+                (*pontos) += 5;
                 strcpy(pedidoAtual->status, "entregue"); // Marcar como entregue
 
                 pedidoParaRemover = pedidoAtual;
-                //removeEntrega(filas, pedidoParaRemover->id, filaAtual->endereco);
+                removeEntrega(filas, pedidoParaRemover->id, filaAtual->endereco);
             }
             else
             {
                 printf("Entrega do pedido %d nao realizada. Adicionando a pilha de nao efetuadas.\n", pedidoAtual->id);
                 pedidoParaRemover = pedidoAtual;
                 adicionaPilhaNaoEfetuada(pilhaNaoEfetuada, pedidoParaRemover);
-                removeEntrega(filas, pedidoParaRemover->id, filaAtual->endereco);
             }
 
             pedidoAtual = proximoPedido; // Avançar para o próximo pedido
         }
-
-       
 
         filaAtual = filaAtual->prox;
     }
@@ -783,6 +814,7 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Fila
 
     // processaPilhaNaoEfetuada(filas, pilhaNaoEfetuada, pilhaDevolucao, pontos);
     processaPilhaNaoEfetuada(pilhaNaoEfetuada, filadevolucao, pontos);
+    removeTodosOsPedidos(filas);
 }
 
 void processaPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos)
@@ -796,13 +828,13 @@ void processaPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao
         printf("\nReprocessando pedido ID %d\n", pedido->id);
 
         int sorteio = rand() % 100;
-        if (sorteio < 20)
-        {
+        if (sorteio <70)
+
+        {   strcpy(pedido->status, "entregue"); // Marcar como entregue
             printf("Reentrega do pedido %d realizada com sucesso.\n", pedido->id);
             strcpy(pedido->status, "entregue"); // Marcar como entregue
 
             (*pontos) += 3;
-            free(pedido); // Remover pedido da pilha de não efetuadas
         }
         else
         {
@@ -811,9 +843,11 @@ void processaPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao
             adicionaFilaDevolucao(filaDevolucao, pedido);
         }
 
-        free(pedidoNaoEfetuado);
+       
     }
     printf("\nPilha de nao efetuadas processada. Pontos atuais: %d\n", *pontos);
+    liberarPilhaNaoEfetuada(pilhaNaoEfetuada);
+
 }
 
 void processaFilaDevolucao(FilaDevolucao **filaDevolucao)
@@ -823,7 +857,6 @@ void processaFilaDevolucao(FilaDevolucao **filaDevolucao)
     {
         Pedido *pedido = atual->pedido;
         printf("Processando devolucao do pedido ID %d\n", pedido->id);
-
         // Mudar o status do pedido para "devolvido"
         strcpy(pedido->status, "devolvido");
 
@@ -1035,4 +1068,19 @@ void limparMemoria(ListaClientes *listaClientes, FilaFilas *filaFilas, PilhaNaoE
         free(devolucaoRemover);
     }
     *filaDevolucao = NULL; // Atualizar o ponteiro da fila de devoluções para NULL
+}
+void liberarPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada)
+{
+    PilhaNaoEfetuada *atual = *pilhaNaoEfetuada;
+    PilhaNaoEfetuada *proximo;
+
+    while (atual != NULL)
+    {
+        proximo = atual->prox; // Armazena o próximo nó
+        free(atual); // Libera a memória do nó atual
+        atual = proximo; // Avança para o próximo nó
+    }
+
+    // Após liberar todos os nós, o ponteiro da pilha deve ser NULL
+    *pilhaNaoEfetuada = NULL;
 }

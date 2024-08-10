@@ -66,6 +66,10 @@ void removeCliente(ListaClientes *lista, FilaFilas *filas);
 void editaCliente(ListaClientes *lista, FilaFilas *filas);
 void imprimeClientes(ListaClientes *lista);
 Cliente *encontrarClientePorID(ListaClientes *lista, int id_cliente);
+void removeTodosOsPedidos(FilaFilas *filas);
+void liberarPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada);
+
+
 
 // Funções para Pedidos
 void adicionaPedido(ListaClientes *lista);
@@ -73,6 +77,8 @@ void removePedido(Cliente *cliente, FilaFilas *filas);
 void editaPedido(Cliente *cliente);
 void imprimePedidos(Cliente *cliente);
 void despacharPedido(ListaClientes *lista, FilaFilas *filas);
+void imprimirPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada);
+
 
 // Funções para Filas de Entrega
 void inicializaFilaFilas(FilaFilas *filas);
