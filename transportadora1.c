@@ -69,7 +69,7 @@ void adicionaCliente(ListaClientes *lista)
     int cpf_length = strlen(novo->cpf);
     if (cpf_length != 11)
     {
-        printf("\nCPF invalido! Deve conter 11 dígitos.\n");
+        printf("\nCPF invalido! Deve conter 11 digitos.\n");
         free(novo);
         return;
     }
