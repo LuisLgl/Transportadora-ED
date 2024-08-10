@@ -789,7 +789,7 @@ void concluirEntrega(ListaClientes *clientes, FilaFilas *filas, PilhaNaoEfetuada
             Pedido *proximoPedido = pedidoAtual->prox; // Salvar o próximo pedido
 
             int sorteio = rand() % 100;
-            if (sorteio < 70)
+            if (sorteio < 85)
             {
                 printf("Entrega do pedido %d realizada com sucesso.\n", pedidoAtual->id);
                 (*pontos) += 5;
@@ -829,7 +829,7 @@ void processaPilhaNaoEfetuada(ListaClientes *clientes, PilhaNaoEfetuada **pilhaN
         printf("\nReprocessando pedido ID %d\n", pedido->id);
 
         int sorteio = rand() % 100;
-        if (sorteio < 70)
+        if (sorteio < 85)
 
         {
             char status[10] = "entregue";
