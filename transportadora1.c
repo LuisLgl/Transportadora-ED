@@ -639,7 +639,7 @@ void removeEntrega(FilaFilas *filas, int id, const char *endereco)
         {
             anterior->prox = atual->prox;
         }
-        free(atual);
+        
         printf("Fila de entregas para o endereco %s foi removida pois nao possui mais pedidos.\n", endereco);
     }
 }
@@ -762,7 +762,7 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Fila
                 strcpy(pedidoAtual->status, "entregue"); // Marcar como entregue
 
                 pedidoParaRemover = pedidoAtual;
-                removeEntrega(filas, pedidoParaRemover->id, filaAtual->endereco);
+                //removeEntrega(filas, pedidoParaRemover->id, filaAtual->endereco);
             }
             else
             {
