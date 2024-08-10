@@ -93,11 +93,11 @@ void adicionaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha, Pedido *pedido);
 void imprimePilhaNaoEfetuada(PilhaNaoEfetuada *pilha);
 
 void inicializaFilaDevolucao(FilaDevolucao **fila);
-void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido);
+void adicionaFilaDevolucao(ListaClientes *clientes, FilaDevolucao **fila, Pedido *pedido);
 void imprimeFilaDevolucao(FilaDevolucao *fila);
 
-void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos);
-void processaPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos);
+void concluirEntrega(ListaClientes *clientes,FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filadevolucao, int *pontos);
+void processaPilhaNaoEfetuada(ListaClientes *clientes,PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos);
 void processaFilaDevolucao(FilaDevolucao **fila);
 
 // Outras funções
@@ -105,4 +105,5 @@ void formatarString(char *str);
 void despacharTudo(ListaClientes *lista, FilaFilas *filas);
 void adicionaFilaNoFinal(FilaFilas *filas, FilaPorEndereco *novaFila);
 void limparMemoria(ListaClientes *listaClientes, FilaFilas *filaFilas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao);
+void atualizarCliente(ListaClientes *clientes, int idPedido, const char *novoStatus);
 #endif // TRANSPORTADORA_H

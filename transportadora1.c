@@ -719,10 +719,9 @@ void adicionaPilhaNaoEfetuada(PilhaNaoEfetuada **pilha, Pedido *pedido)
     novo->pedido = pedido;
     novo->prox = *pilha;
     *pilha = novo;
-    
 }
 
-void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido)
+void adicionaFilaDevolucao(ListaClientes *clientes, FilaDevolucao **fila, Pedido *pedido)
 {
     if (pedido == NULL)
     {
@@ -738,7 +737,8 @@ void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido)
         fprintf(stderr, "Erro ao alocar memoria para a fila de devolucao.\n");
         return;
     }
-       strcpy(pedido->status, "devolvido");
+    char status[10] = "devolvido";
+    atualizarCliente(clientes, pedido->id, status);
 
     novo->pedido = pedido;
     novo->prox = NULL;
@@ -760,7 +760,7 @@ void adicionaFilaDevolucao(FilaDevolucao **fila, Pedido *pedido)
     }
 }
 
-void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filadevolucao, int *pontos)
+void concluirEntrega(ListaClientes *clientes, FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filadevolucao, int *pontos)
 {
     if (filas->inicio == NULL)
     {
@@ -793,7 +793,8 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Fila
             {
                 printf("Entrega do pedido %d realizada com sucesso.\n", pedidoAtual->id);
                 (*pontos) += 5;
-                strcpy(pedidoAtual->status, "entregue"); // Marcar como entregue
+                char status[10] = "entregue";
+                atualizarCliente(clientes, pedidoAtual->id, status);
 
                 pedidoParaRemover = pedidoAtual;
                 removeEntrega(filas, pedidoParaRemover->id, filaAtual->endereco);
@@ -813,11 +814,11 @@ void concluirEntrega(FilaFilas *filas, PilhaNaoEfetuada **pilhaNaoEfetuada, Fila
     printf("\nFila de entregas processada. Pontos atuais: %d\n", *pontos);
 
     // processaPilhaNaoEfetuada(filas, pilhaNaoEfetuada, pilhaDevolucao, pontos);
-    processaPilhaNaoEfetuada(pilhaNaoEfetuada, filadevolucao, pontos);
+    processaPilhaNaoEfetuada(clientes, pilhaNaoEfetuada, filadevolucao, pontos);
     removeTodosOsPedidos(filas);
 }
 
-void processaPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos)
+void processaPilhaNaoEfetuada(ListaClientes *clientes, PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao **filaDevolucao, int *pontos)
 {
     while (*pilhaNaoEfetuada != NULL)
     {
@@ -828,9 +829,12 @@ void processaPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao
         printf("\nReprocessando pedido ID %d\n", pedido->id);
 
         int sorteio = rand() % 100;
-        if (sorteio <70)
+        if (sorteio < 70)
 
-        {   strcpy(pedido->status, "entregue"); // Marcar como entregue
+        {
+            char status[10] = "entregue";
+            atualizarCliente(clientes, pedido->id, status);
+
             printf("Reentrega do pedido %d realizada com sucesso.\n", pedido->id);
             strcpy(pedido->status, "entregue"); // Marcar como entregue
 
@@ -840,14 +844,11 @@ void processaPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada, FilaDevolucao
         {
             printf("Reentrega do pedido %d falhou. Enviando para devolucao.\n", pedido->id);
             (*pontos) -= 1;
-            adicionaFilaDevolucao(filaDevolucao, pedido);
+            adicionaFilaDevolucao(clientes,filaDevolucao, pedido);
         }
-
-       
     }
     printf("\nPilha de nao efetuadas processada. Pontos atuais: %d\n", *pontos);
     liberarPilhaNaoEfetuada(pilhaNaoEfetuada);
-
 }
 
 void processaFilaDevolucao(FilaDevolucao **filaDevolucao)
@@ -1077,10 +1078,36 @@ void liberarPilhaNaoEfetuada(PilhaNaoEfetuada **pilhaNaoEfetuada)
     while (atual != NULL)
     {
         proximo = atual->prox; // Armazena o próximo nó
-        free(atual); // Libera a memória do nó atual
-        atual = proximo; // Avança para o próximo nó
+        free(atual);           // Libera a memória do nó atual
+        atual = proximo;       // Avança para o próximo nó
     }
 
     // Após liberar todos os nós, o ponteiro da pilha deve ser NULL
     *pilhaNaoEfetuada = NULL;
+}
+void atualizarCliente(ListaClientes *clientes, int idPedido, const char *novoStatus)
+{
+    Cliente *clienteAtual = clientes->inicio;
+
+    // Percorrer a lista de clientes para encontrar o cliente correto
+    while (clienteAtual != NULL)
+    {
+        Pedido *pedidoAtual = clienteAtual->pedidos;
+
+        // Percorrer a lista de pedidos do cliente para encontrar o pedido correto
+        while (pedidoAtual != NULL)
+        {
+            if (pedidoAtual->id == idPedido)
+            {
+                // Atualizar o status do pedido
+                snprintf(pedidoAtual->status, sizeof(pedidoAtual->status), "%s", novoStatus);
+
+                printf("Pedido ID %d atualizado para o cliente ID %d com o novo status: %s.\n", idPedido, clienteAtual->id, novoStatus);
+                return;
+            }
+            pedidoAtual = pedidoAtual->prox;
+        }
+        clienteAtual = clienteAtual->prox;
+    }
+    printf("Pedido ID %d não encontrado em nenhum cliente.\n", idPedido);
 }

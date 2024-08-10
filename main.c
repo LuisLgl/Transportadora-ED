@@ -4,7 +4,7 @@
 
 void menuClientes(ListaClientes *listaClientes, FilaFilas *filaFilas);
 void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas);
-void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, FilaDevolucao *filadevolucao, int *pontos);
+void menuEntregas(ListaClientes *clientes,FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, FilaDevolucao *filadevolucao, int *pontos);
 
 int main()
 {
@@ -41,7 +41,7 @@ int main()
             menuPedidos(&listaClientes, &filaFilas);
             break;
         case 3:
-            menuEntregas(&filaFilas, pilhaNaoEfetuada, filadevolucao, &pontos);
+            menuEntregas(&listaClientes,&filaFilas, pilhaNaoEfetuada, filadevolucao, &pontos);
             break;
         case 4:
             printf("Pontos atuais: %d\n", pontos);
@@ -169,8 +169,8 @@ void menuPedidos(ListaClientes *listaClientes, FilaFilas *filaFilas)
     } while (opcao != 6);
 }
 
-void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, FilaDevolucao *filadevolucao, int *pontos)
-{
+void menuEntregas(ListaClientes *clientes,FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, FilaDevolucao *filadevolucao, int *pontos)
+{   
     int opcao;
 
     do
@@ -192,7 +192,7 @@ void menuEntregas(FilaFilas *filaFilas, PilhaNaoEfetuada *pilhaNaoEfetuada, Fila
             imprimeFilaDevolucao(filadevolucao);
             break;
         case 3:
-            concluirEntrega(filaFilas, &pilhaNaoEfetuada, &filadevolucao, pontos);
+            concluirEntrega(clientes, filaFilas, &pilhaNaoEfetuada, &filadevolucao, pontos);
             break;
         case 4:
             printf("Voltando ao menu principal...\n");
